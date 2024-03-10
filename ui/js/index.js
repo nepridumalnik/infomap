@@ -7,7 +7,7 @@ class Button extends React.Component {
             this.props.onClick()
         }
 
-        return (<button onClick={increment}> Кнопа</button >)
+        return (<button onClick={increment}>Кнопа</button >)
     }
 }
 
