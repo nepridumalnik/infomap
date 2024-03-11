@@ -30,6 +30,8 @@ func CreateServer() (*Server, error) {
 		router: mux.NewRouter(),
 	}
 
+	server.db.AutoMigrate(&TableRow{})
+
 	server.router = mux.NewRouter()
 	server.router.HandleFunc("/upload", upload).Methods("POST")
 

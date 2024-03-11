@@ -26,19 +26,19 @@ const (
 	commentary    = "Комментарий"
 )
 
-type headers struct {
-	region        int
-	responsible   int
-	verified      int
-	vkUrl         int
-	okUrl         int
-	tgUrl         int
-	reason        int
-	commentaryNpa int
-	fullName      int
-	ogrn          int
-	status        int
-	commentary    int
+type TableRow struct {
+	Region        int
+	Responsible   int
+	Verified      int
+	VkUrl         int
+	OkUrl         int
+	TgUrl         int
+	Reason        int
+	CommentaryNpa int
+	FullName      int
+	Ogrn          int
+	Status        int
+	Commentary    int
 }
 
 // Извлечь excel файл из multipart данных
@@ -59,10 +59,10 @@ func extractExcel(file *multipart.File) (*excelize.File, error) {
 	return excel, nil
 }
 
-func excelToHeaders(excel *excelize.File) (*headers, error) {
+func excelToHeaders(excel *excelize.File) (*TableRow, error) {
 	const columnsCount = 12
 
-	hs := new(headers)
+	hs := new(TableRow)
 
 	for i := 0; i < columnsCount; i++ {
 		request := fmt.Sprintf("%c1", 'A'+i)
@@ -74,29 +74,29 @@ func excelToHeaders(excel *excelize.File) (*headers, error) {
 
 		switch {
 		case cell == region:
-			hs.region = i
+			hs.Region = i
 		case cell == responsible:
-			hs.responsible = i
+			hs.Responsible = i
 		case cell == verified:
-			hs.verified = i
+			hs.Verified = i
 		case cell == vkUrl:
-			hs.vkUrl = i
+			hs.VkUrl = i
 		case cell == okUrl:
-			hs.okUrl = i
+			hs.OkUrl = i
 		case cell == tgUrl:
-			hs.tgUrl = i
+			hs.TgUrl = i
 		case cell == reason:
-			hs.reason = i
+			hs.Reason = i
 		case cell == commentaryNpa:
-			hs.commentaryNpa = i
+			hs.CommentaryNpa = i
 		case cell == fullName:
-			hs.fullName = i
+			hs.FullName = i
 		case cell == ogrn:
-			hs.ogrn = i
+			hs.Ogrn = i
 		case cell == status:
-			hs.status = i
+			hs.Status = i
 		case cell == commentary:
-			hs.commentary = i
+			hs.Commentary = i
 		default:
 			return nil, errors.New("unknown cell name")
 		}
