@@ -3,7 +3,10 @@ package server
 import (
 	"net/http"
 
+	"github.com/glebarez/sqlite"
 	"github.com/gorilla/mux"
+
+	"gorm.io/gorm"
 )
 
 type AbstractServer interface {
@@ -12,10 +15,20 @@ type AbstractServer interface {
 
 type Server struct {
 	router *mux.Router
+	db     *gorm.DB
 }
 
-func CreateServer() *Server {
-	server := Server{}
+func CreateServer() (*Server, error) {
+	db, err := gorm.Open(sqlite.Open("data.db"))
+
+	if err != nil {
+		return nil, err
+	}
+
+	server := Server{
+		db:     db,
+		router: mux.NewRouter(),
+	}
 
 	server.router = mux.NewRouter()
 	server.router.HandleFunc("/upload", upload).Methods("POST")
@@ -28,7 +41,7 @@ func CreateServer() *Server {
 	htmlHandler := http.StripPrefix("/", http.FileServer(http.Dir("./ui/html/")))
 	server.router.PathPrefix("/").Methods("GET").Handler(htmlHandler)
 
-	return &server
+	return &server, nil
 }
 
 func (s *Server) ListenAndServe(address string) error {
