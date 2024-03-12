@@ -165,5 +165,16 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 	s.moveRowsToDb(hs, excel)
 }
 
+// Обходит построчно таблицу и заносит данные в бд
 func (s *storage) moveRowsToDb(hs *tableRow, excel *excelize.File) {
+	for i := 2; ; i++ {
+		request := fmt.Sprintf("%c%d", 'A'+hs.fullName, i)
+		cell, err := excel.GetCellValue(mainList, request)
+
+		if err != nil || len(cell) == 0 {
+			return
+		}
+
+		fmt.Println(cell)
+	}
 }
