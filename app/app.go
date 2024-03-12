@@ -1,7 +1,10 @@
 package app
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -41,5 +44,19 @@ func CreateApp(address string) (*App, error) {
 }
 
 func (s *App) Run() error {
-	return http.ListenAndServe(s.address, s.router)
+	file, err := os.OpenFile("error_log.txt", os.O_RDWR|os.O_CREATE, 0666)
+
+	if err != nil {
+		return err
+	}
+
+	server := &http.Server{
+		Handler:      s.router,
+		Addr:         s.address,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+		ErrorLog:     log.New(file, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
+	}
+
+	return server.ListenAndServe()
 }
