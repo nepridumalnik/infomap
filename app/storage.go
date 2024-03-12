@@ -34,18 +34,18 @@ const (
 
 // Строка таблицы
 type tableRow struct {
-	Region        int
-	Responsible   int
-	Verified      int
-	VkUrl         int
-	OkUrl         int
-	TgUrl         int
-	Reason        int
-	CommentaryNpa int
-	FullName      int
-	Ogrn          int
-	Status        int
-	Commentary    int
+	region        int
+	responsible   int
+	verified      int
+	vkUrl         int
+	okUrl         int
+	tgUrl         int
+	reason        int
+	commentaryNpa int
+	fullName      int
+	ogrn          int
+	status        int
+	commentary    int
 }
 
 // Хранилище данных
@@ -95,7 +95,7 @@ func (s *storage) excelToHeaders(excel *excelize.File) (*tableRow, error) {
 
 	for i := 0; i < columnsCount; i++ {
 		request := fmt.Sprintf("%c1", 'A'+i)
-		cell, err := excel.GetCellValue("Томская область", request)
+		cell, err := excel.GetCellValue(mainList, request)
 
 		if err != nil {
 			return nil, err
@@ -103,29 +103,29 @@ func (s *storage) excelToHeaders(excel *excelize.File) (*tableRow, error) {
 
 		switch {
 		case cell == region:
-			hs.Region = i
+			hs.region = i
 		case cell == responsible:
-			hs.Responsible = i
+			hs.responsible = i
 		case cell == verified:
-			hs.Verified = i
+			hs.verified = i
 		case cell == vkUrl:
-			hs.VkUrl = i
+			hs.vkUrl = i
 		case cell == okUrl:
-			hs.OkUrl = i
+			hs.okUrl = i
 		case cell == tgUrl:
-			hs.TgUrl = i
+			hs.tgUrl = i
 		case cell == reason:
-			hs.Reason = i
+			hs.reason = i
 		case cell == commentaryNpa:
-			hs.CommentaryNpa = i
+			hs.commentaryNpa = i
 		case cell == fullName:
-			hs.FullName = i
+			hs.fullName = i
 		case cell == ogrn:
-			hs.Ogrn = i
+			hs.ogrn = i
 		case cell == status:
-			hs.Status = i
+			hs.status = i
 		case cell == commentary:
-			hs.Commentary = i
+			hs.commentary = i
 		default:
 			return nil, errors.New("unknown cell name")
 		}
@@ -156,18 +156,14 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cell, err := excel.GetCellValue(mainList, "A1")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	fmt.Fprint(w, cell)
 	hs, err := s.excelToHeaders(excel)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	fmt.Fprint(w, hs)
+	s.moveRowsToDb(hs, excel)
+}
+
+func (s *storage) moveRowsToDb(hs *tableRow, excel *excelize.File) {
 }
