@@ -1,18 +1,18 @@
 package main
 
 import (
-	server "infomap/src"
+	server "infomap/app"
 	"log"
 )
 
 func main() {
-	server, err := server.CreateServer()
+	app, err := server.CreateApp(":8080")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = server.ListenAndServe(":8080")
+	err = app.Run()
 
 	if err != nil {
 		log.Fatal(err)
