@@ -3,35 +3,31 @@ package app
 import (
 	"net/http"
 
-	"github.com/glebarez/sqlite"
 	"github.com/gorilla/mux"
-
-	"gorm.io/gorm"
 )
 
 type App struct {
 	router  *mux.Router
-	db      *gorm.DB
+	storage *storage
 	address string
 }
 
 func CreateApp(address string) (*App, error) {
-	db, err := gorm.Open(sqlite.Open("data.db"))
+	storage, err := NewStorage()
 
 	if err != nil {
 		return nil, err
 	}
 
 	app := App{
-		db:      db,
+		storage: storage,
 		router:  mux.NewRouter(),
 		address: address,
 	}
 
-	app.db.AutoMigrate(&TableRow{})
-
 	app.router = mux.NewRouter()
-	app.router.HandleFunc("/upload", upload).Methods("POST")
+
+	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
 
 	// Добавление скриптов
 	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))
