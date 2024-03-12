@@ -17,6 +17,7 @@ import (
 
 // Столбцы таблицы
 const (
+	mainList      = "Томская область"
 	region        = "Регион"
 	responsible   = "Назначен ответственный"
 	verified      = "Страница подтверждена"
@@ -155,7 +156,7 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cell, err := excel.GetCellValue("Томская область", "A1")
+	cell, err := excel.GetCellValue(mainList, "A1")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
