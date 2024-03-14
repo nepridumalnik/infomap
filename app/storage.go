@@ -204,6 +204,7 @@ func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) {
 	}
 }
 
+// Получить строку из excel
 func (s *storage) getRowByIdx(c *columns, excel *excelize.File, idx int) (*tableRow, error) {
 	row := &tableRow{}
 
