@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"container/list"
 	"errors"
 	"fmt"
 	"io"
@@ -32,8 +33,8 @@ const (
 	commentary    = "Комментарий"
 )
 
-// Строка таблицы
-type tableRow struct {
+// Индексы столбцов таблицы
+type columns struct {
 	region        int
 	responsible   int
 	verified      int
@@ -46,6 +47,22 @@ type tableRow struct {
 	ogrn          int
 	status        int
 	commentary    int
+}
+
+// Строка таблицы
+type tableRow struct {
+	region        string
+	responsible   string
+	verified      string
+	vkUrl         string
+	okUrl         string
+	tgUrl         string
+	reason        string
+	commentaryNpa string
+	fullName      string
+	ogrn          string
+	status        string
+	commentary    string
 }
 
 // Хранилище данных
@@ -88,10 +105,10 @@ func (s *storage) extractExcel(file *multipart.File) (*excelize.File, error) {
 }
 
 // Конвертировать excel файл в заголовки
-func (s *storage) excelToHeaders(excel *excelize.File) (*tableRow, error) {
+func (s *storage) excelToColumns(excel *excelize.File) (*columns, error) {
 	const columnsCount = 12
 
-	hs := new(tableRow)
+	c := new(columns)
 
 	for i := 0; i < columnsCount; i++ {
 		request := fmt.Sprintf("%c1", 'A'+i)
@@ -103,35 +120,35 @@ func (s *storage) excelToHeaders(excel *excelize.File) (*tableRow, error) {
 
 		switch {
 		case cell == region:
-			hs.region = i
+			c.region = i
 		case cell == responsible:
-			hs.responsible = i
+			c.responsible = i
 		case cell == verified:
-			hs.verified = i
+			c.verified = i
 		case cell == vkUrl:
-			hs.vkUrl = i
+			c.vkUrl = i
 		case cell == okUrl:
-			hs.okUrl = i
+			c.okUrl = i
 		case cell == tgUrl:
-			hs.tgUrl = i
+			c.tgUrl = i
 		case cell == reason:
-			hs.reason = i
+			c.reason = i
 		case cell == commentaryNpa:
-			hs.commentaryNpa = i
+			c.commentaryNpa = i
 		case cell == fullName:
-			hs.fullName = i
+			c.fullName = i
 		case cell == ogrn:
-			hs.ogrn = i
+			c.ogrn = i
 		case cell == status:
-			hs.status = i
+			c.status = i
 		case cell == commentary:
-			hs.commentary = i
+			c.commentary = i
 		default:
 			return nil, errors.New("unknown cell name")
 		}
 	}
 
-	return hs, nil
+	return c, nil
 }
 
 // Загрузить excel файл на сервер
@@ -156,25 +173,90 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hs, err := s.excelToHeaders(excel)
+	c, err := s.excelToColumns(excel)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.moveRowsToDb(hs, excel)
+	s.moveRowsToDb(c, excel)
 }
 
 // Обходит построчно таблицу и заносит данные в бд
-func (s *storage) moveRowsToDb(hs *tableRow, excel *excelize.File) {
+func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) {
+	l := list.New()
+
 	for i := 2; ; i++ {
-		request := fmt.Sprintf("%c%d", 'A'+hs.fullName, i)
+		request := fmt.Sprintf("%c%d", 'A'+c.fullName, i)
 		cell, err := excel.GetCellValue(mainList, request)
 
 		if err != nil || len(cell) == 0 {
-			return
+			break
 		}
 
-		fmt.Println(cell)
+		row, err := s.getRowByIdx(c, excel, i)
+
+		if err != nil {
+			continue
+		}
+
+		l.PushBack(row)
 	}
+}
+
+func (s *storage) getRowByIdx(c *columns, excel *excelize.File, idx int) (*tableRow, error) {
+	row := &tableRow{}
+
+	var err error
+
+	row.region, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.region, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.responsible, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.responsible, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.verified, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.verified, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.vkUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.vkUrl, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.okUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.okUrl, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.tgUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.tgUrl, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.reason, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.reason, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.commentaryNpa, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentaryNpa, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.fullName, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.fullName, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.ogrn, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.ogrn, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.status, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.status, idx))
+	if err != nil {
+		return nil, err
+	}
+	row.commentary, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentary, idx))
+	if err != nil {
+		return nil, err
+	}
+
+	return row, nil
 }
