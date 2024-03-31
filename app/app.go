@@ -28,8 +28,6 @@ func CreateApp(address string) (*App, error) {
 		address: address,
 	}
 
-	app.router = mux.NewRouter()
-
 	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
 
 	// Добавление скриптов
