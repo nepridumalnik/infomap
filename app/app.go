@@ -22,11 +22,15 @@ func CreateApp(address string) (*App, error) {
 		return nil, err
 	}
 
+	mw := &middleware{storage: storage}
+
 	app := App{
 		storage: storage,
 		router:  mux.NewRouter(),
 		address: address,
 	}
+
+	app.router.Use(mw.authMiddleware)
 
 	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
 
