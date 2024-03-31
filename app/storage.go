@@ -51,18 +51,18 @@ type columns struct {
 
 // Строка таблицы
 type tableRow struct {
-	region        string
-	responsible   string
-	verified      string
-	vkUrl         string
-	okUrl         string
-	tgUrl         string
-	reason        string
-	commentaryNpa string
-	fullName      string
-	ogrn          string
-	status        string
-	commentary    string
+	Region        string
+	Responsible   string
+	Verified      string
+	VkUrl         string
+	OkUrl         string
+	TgUrl         string
+	Reason        string
+	CommentaryNpa string
+	FullName      string
+	Ogrn          string
+	Status        string
+	Commentary    string
 }
 
 // Хранилище данных
@@ -77,6 +77,13 @@ func NewStorage() (*storage, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = db.AutoMigrate(&tableRow{}, &User{})
+	if err != nil {
+		return nil, err
+	}
+
+	db.Create(NewUser(Admin, "admin", "minda"))
 
 	return &storage{db: db}, nil
 }
@@ -210,51 +217,51 @@ func (s *storage) getRowByIdx(c *columns, excel *excelize.File, idx int) (*table
 
 	var err error
 
-	row.region, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.region, idx))
+	row.Region, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.region, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.responsible, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.responsible, idx))
+	row.Responsible, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.responsible, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.verified, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.verified, idx))
+	row.Verified, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.verified, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.vkUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.vkUrl, idx))
+	row.VkUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.vkUrl, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.okUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.okUrl, idx))
+	row.OkUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.okUrl, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.tgUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.tgUrl, idx))
+	row.TgUrl, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.tgUrl, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.reason, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.reason, idx))
+	row.Reason, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.reason, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.commentaryNpa, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentaryNpa, idx))
+	row.CommentaryNpa, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentaryNpa, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.fullName, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.fullName, idx))
+	row.FullName, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.fullName, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.ogrn, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.ogrn, idx))
+	row.Ogrn, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.ogrn, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.status, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.status, idx))
+	row.Status, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.status, idx))
 	if err != nil {
 		return nil, err
 	}
-	row.commentary, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentary, idx))
+	row.Commentary, err = excel.GetCellValue(mainList, fmt.Sprintf("%c%d", 'A'+c.commentary, idx))
 	if err != nil {
 		return nil, err
 	}
