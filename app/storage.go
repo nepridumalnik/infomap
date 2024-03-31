@@ -51,6 +51,7 @@ type columns struct {
 
 // Строка таблицы
 type tableRow struct {
+	Id            Id `gorm:"primaryKey"`
 	Region        string
 	Responsible   string
 	Verified      string
