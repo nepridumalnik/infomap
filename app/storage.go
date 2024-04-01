@@ -79,7 +79,7 @@ func NewStorage() (*storage, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&tableRow{}, &User{})
+	err = db.AutoMigrate(&tableRow{}, &User{}, &session{})
 	if err != nil {
 		return nil, err
 	}

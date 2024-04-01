@@ -22,30 +22,36 @@ func CreateApp(address string) (*App, error) {
 		return nil, err
 	}
 
-	mw := &middleware{storage: storage}
-
 	app := App{
 		storage: storage,
 		router:  mux.NewRouter(),
 		address: address,
 	}
 
-	app.router.Use(mw.authMiddleware)
-
-	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
-
-	// Добавление скриптов
-	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))
-	app.router.PathPrefix("/js").Methods("GET").Handler(jsHandler)
-
-	// Добавление html файлов
-	htmlHandler := http.StripPrefix("/", http.FileServer(http.Dir("./ui/html/")))
-	app.router.PathPrefix("/").Methods("GET").Handler(htmlHandler)
+	app.registerHandlers()
 
 	return &app, nil
 }
 
-func (s *App) Run() error {
+// Регистрация всех обработчиков
+func (app *App) registerHandlers() {
+	// Проверка авторизации
+	mw := &middleware{storage: app.storage}
+	app.router.Use(mw.authMiddleware)
+
+	// Загрузка файлов
+	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
+
+	// Загрузка скриптов
+	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))
+	app.router.PathPrefix("/js").Methods("GET").Handler(jsHandler)
+
+	// Загрузка html
+	htmlHandler := http.StripPrefix("/", http.FileServer(http.Dir("./ui/html/")))
+	app.router.PathPrefix("/").Methods("GET").Handler(htmlHandler)
+}
+
+func (app *App) Run() error {
 	file, err := os.OpenFile("error_log.txt", os.O_RDWR|os.O_CREATE, 0666)
 
 	if err != nil {
@@ -53,8 +59,8 @@ func (s *App) Run() error {
 	}
 
 	server := &http.Server{
-		Handler:      s.router,
-		Addr:         s.address,
+		Handler:      app.router,
+		Addr:         app.address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 		ErrorLog:     log.New(file, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
