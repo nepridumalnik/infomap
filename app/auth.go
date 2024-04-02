@@ -17,7 +17,8 @@ type session struct {
 
 const (
 	authorizationKey = "Authorization-Token"
-	allowedPath      = "/auth.html"
+	allowedPath      = "/auth"
+	allowedPathHtml  = "./ui/html/" + allowedPath + ".html"
 )
 
 // Создать Bearer токен (да, странный способ)
@@ -30,6 +31,10 @@ const (
 // 	jsonData, _ := json.Marshal(token)
 // 	return string(jsonData)
 // }
+
+func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, allowedPathHtml)
+}
 
 // Пока тестовая реализация проверки, чтобы было перед глазами как правильно создавать cookie
 func (m *middleware) authMiddleware(next http.Handler) http.Handler {
