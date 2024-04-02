@@ -2,6 +2,8 @@ package app
 
 import (
 	// "encoding/json"
+
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -32,8 +34,19 @@ const (
 // 	return string(jsonData)
 // }
 
+// Обработчик авторизации
 func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, allowedPathHtml)
+	switch r.Method {
+	case "GET":
+		http.ServeFile(w, r, allowedPathHtml)
+
+	case "POST":
+		user := r.FormValue("user")
+		password := r.FormValue("password")
+
+		fmt.Println(user, password)
+		fmt.Fprintf(w, "<h1>%s:%s</h1>", user, password)
+	}
 }
 
 // Пока тестовая реализация проверки, чтобы было перед глазами как правильно создавать cookie

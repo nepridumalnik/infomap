@@ -17,13 +17,13 @@
     </div>
     <h2>Авторизация</h2>
     <br>
-    <form>
+    <form method="post">
       <div class="inputBox">
-        <input type="email" name="email" required onkeyup="this.setAttribute('value', this.value);" value="">
+        <input type="text" name="user" required onkeyup="this.setAttribute('value', this.value);" value="">
         <label>Пользователь</label>
       </div>
       <div class="inputBox">
-        <input type="text" name="text" required onkeyup="this.setAttribute('value', this.value);" value="">
+        <input type="password" name="password" required onkeyup="this.setAttribute('value', this.value);" value="">
         <label>Пароль</label>
       </div>
       <input type="submit" name="sign-in" value="Войти">
