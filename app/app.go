@@ -40,7 +40,7 @@ func (app *App) registerHandlers() {
 	app.router.Use(mw.authMiddleware)
 
 	// Обработчик авторизации
-	app.router.HandleFunc("/auth", mw.authHandler)
+	app.router.HandleFunc("/auth", mw.authHandler).Methods("GET", "POST")
 
 	// Загрузка файлов
 	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
