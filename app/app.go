@@ -46,6 +46,10 @@ func (app *App) registerHandlers() {
 	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))
 	app.router.PathPrefix("/js").Methods("GET").Handler(jsHandler)
 
+	// Загрузка стилей
+	cssHandler := http.StripPrefix("/styles/", http.FileServer(http.Dir("./ui/styles/")))
+	app.router.PathPrefix("/styles").Methods("GET").Handler(cssHandler)
+
 	// Загрузка html
 	htmlHandler := http.StripPrefix("/", http.FileServer(http.Dir("./ui/html/")))
 	app.router.PathPrefix("/").Methods("GET").Handler(htmlHandler)
