@@ -13,6 +13,10 @@ type middleware struct {
 type session struct {
 	Id    Id `gorm:"primaryKey"`
 	Token string
+
+	// Для связи с пользователями
+	UserID Id   `gorm:"unique"`
+	User   User `gorm:"foreignKey:UserID"`
 }
 
 const (
