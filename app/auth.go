@@ -48,6 +48,7 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 		result := m.storage.db.Where(data, "name", "password").Find(&users)
 
 		if result.RowsAffected == 1 {
+			// TODO: добавить запись в таблицу сессий
 			cookie := &http.Cookie{
 				Name:  authorizationKey,
 				Value: makeBearer(password),
@@ -75,6 +76,7 @@ func (m *middleware) authMiddleware(next http.Handler) http.Handler {
 		value, err := r.Cookie(authorizationKey)
 
 		if err != nil || value == nil {
+			// TODO: добавить проверку с таблицей сессий
 
 			// При неудачной проверке перенаправляем на страницу авторизации
 			http.Redirect(w, r, allowedPath, http.StatusSeeOther)
