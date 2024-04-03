@@ -43,16 +43,24 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, allowedPathHtml)
 
 	case "POST":
-		user := r.FormValue("user")
+		name := r.FormValue("user")
 		password := r.FormValue("password")
 
-		data := &User{Name: user, Password: Sha512(password)}
-		var users User
+		data := &User{Name: name, Password: Sha512(password)}
+		var user User
 
-		result := m.storage.db.Where(data, "name", "password").Find(&users)
+		result := m.storage.db.Where(data, "name", "password").Find(&user)
 
 		if result.RowsAffected == 1 {
-			// TODO: добавить запись в таблицу сессий
+			session := session{Token: makeBearer(password), UserID: user.Id}
+			result := m.storage.db.Where(&session).First(&session)
+
+			if result.RowsAffected == 0 {
+				m.storage.db.Create(&session)
+			} else {
+				m.storage.db.Save(&session)
+			}
+
 			cookie := &http.Cookie{
 				Name:  authorizationKey,
 				Value: makeBearer(password),
@@ -77,11 +85,18 @@ func (m *middleware) authMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Если путь не безопасный - совершаем проверку, есть ли права доступа
-		value, err := r.Cookie(authorizationKey)
+		token, err := r.Cookie(authorizationKey)
 
-		if err != nil || value == nil {
-			// TODO: добавить проверку с таблицей сессий
+		if err != nil || token == nil {
+			// При неудачной проверке перенаправляем на страницу авторизации
+			http.Redirect(w, r, allowedPath, http.StatusSeeOther)
+			return
+		}
 
+		s := session{Token: token.Value}
+		result := m.storage.db.Where(&s).First(&s)
+
+		if result.RowsAffected == 0 || s.Token != token.Value {
 			// При неудачной проверке перенаправляем на страницу авторизации
 			http.Redirect(w, r, allowedPath, http.StatusSeeOther)
 			return
