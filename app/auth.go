@@ -1,9 +1,7 @@
 package app
 
 import (
-	// "encoding/json"
-
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -20,19 +18,19 @@ type session struct {
 const (
 	authorizationKey = "Authorization-Token"
 	allowedPath      = "/auth"
-	allowedPathHtml  = "./ui/html/" + allowedPath + ".html"
+	allowedPathHtml  = "./ui/html" + allowedPath + ".html"
 )
 
 // Создать Bearer токен (да, странный способ)
-// func makeBearer(data string) string {
-// 	token := map[string]string{
-// 		"type": "Bearer",
-// 		"data": data,
-// 	}
+func makeBearer(data string) string {
+	token := map[string]string{
+		"type": "Bearer",
+		"data": data,
+	}
 
-// 	jsonData, _ := json.Marshal(token)
-// 	return string(jsonData)
-// }
+	jsonData, _ := json.Marshal(token)
+	return Sha512(string(jsonData))
+}
 
 // Обработчик авторизации
 func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,8 +42,24 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 		user := r.FormValue("user")
 		password := r.FormValue("password")
 
-		fmt.Println(user, password)
-		fmt.Fprintf(w, "<h1>%s:%s</h1>", user, password)
+		data := &User{Name: user, Password: Sha512(password)}
+		var users User
+
+		result := m.storage.db.Where(data, "name", "password").Find(&users)
+
+		if result.RowsAffected == 1 {
+			cookie := &http.Cookie{
+				Name:  authorizationKey,
+				Value: makeBearer(password),
+			}
+
+			http.SetCookie(w, cookie)
+
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		http.Error(w, "wrong data", http.StatusUnauthorized)
 	}
 }
 
@@ -61,13 +75,6 @@ func (m *middleware) authMiddleware(next http.Handler) http.Handler {
 		value, err := r.Cookie(authorizationKey)
 
 		if err != nil || value == nil {
-
-			// cookie := &http.Cookie{
-			// 	Name:  authorizationKey,
-			// 	Value: makeBearer("test_token"),
-			// }
-
-			// http.SetCookie(w, cookie)
 
 			// При неудачной проверке перенаправляем на страницу авторизации
 			http.Redirect(w, r, allowedPath, http.StatusSeeOther)
