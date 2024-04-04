@@ -58,8 +58,12 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 		result := m.storage.db.Where(data, "name", "password").Find(&user)
 
 		if result.RowsAffected == 1 {
-			session := session{Token: makeBearer(password), UserID: user.Id}
-			result := m.storage.db.Where(&session).First(&session)
+			session := session{Token: Sha512(password), UserID: user.Id}
+			result := m.storage.db.Find(&session).Where("password", "user_id")
+
+			if result.Error != nil {
+				http.Error(w, result.Error.Error(), http.StatusBadRequest)
+			}
 
 			if result.RowsAffected == 0 {
 				m.storage.db.Create(&session)
@@ -73,7 +77,6 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			http.SetCookie(w, cookie)
-
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
