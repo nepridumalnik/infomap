@@ -1,33 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Авторизация</title>
-  <link rel="stylesheet" href="styles/style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+
+    <link rel="stylesheet" href="styles/bootstrap.css">
 </head>
 
-<body>
+<body class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-sm p-4">
+        <h2 class="card-title text-center mb-4">Авторизация</h2>
 
-  <div class="box">
-    <div class="logo">
-      <h2>Авторизация</h2>
+        <form method="post" class="g-3">
+            <div class="col-md-12">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Пользователь</span>
+                    <input type="text" name="user" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Пароль</span>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="col-md-12 text-center">
+                <button type="submit" name="sign-in" class="btn btn-primary">Войти</button>
+            </div>
+
+        </form>
     </div>
-    <br>
-    <form method="post">
-      <div class="inputBox">
-        <input type="text" name="user" required onkeyup="this.setAttribute('value', this.value);" value="">
-        <label>Пользователь</label>
-      </div>
-      <div class="inputBox">
-        <input type="password" name="password" required onkeyup="this.setAttribute('value', this.value);" value="">
-        <label>Пароль</label>
-      </div>
-      <input type="submit" name="sign-in" value="Войти">
-    </form>
-  </div>
 
 </body>
 
