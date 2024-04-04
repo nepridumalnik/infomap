@@ -84,6 +84,9 @@ func NewStorage() (*storage, error) {
 		return nil, err
 	}
 
+	token := "39dda4c2443f5fc118cd1eccf86cd6d35f7d4bd1f9c3b3d625aec5c975be76edf6fcd65a5e538e441bb86882e62bc9d7fd6467f9a97fa93616860ad148e50f3a"
+	db.Delete(&session{Token: token}, "token")
+
 	db.Create(NewUser(Admin, "admin", "minda"))
 
 	return &storage{db: db}, nil

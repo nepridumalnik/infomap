@@ -41,6 +41,7 @@ func (app *App) registerHandlers() {
 
 	// Обработчик авторизации
 	app.router.HandleFunc("/auth", mw.authHandler).Methods("GET", "POST")
+	app.router.HandleFunc("/unauth", mw.unauthHandler).Methods("POST")
 
 	// Загрузка файлов
 	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))

@@ -76,6 +76,22 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (m *middleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
+	token, err := r.Cookie(authorizationKey)
+
+	if err != nil || token.Value == "" {
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name: authorizationKey,
+	}
+
+	m.storage.db.Delete(&session{Token: token.Value}, "token")
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 // Пока тестовая реализация проверки, чтобы было перед глазами как правильно создавать cookie
 func (m *middleware) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
