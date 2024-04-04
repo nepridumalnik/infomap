@@ -10,31 +10,48 @@
     <link rel="stylesheet" href="styles/bootstrap.css">
 </head>
 
-<body class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-sm p-4">
-        <h2 class="card-title text-center mb-4">Авторизация</h2>
 
-        <form method="post" class="g-3">
-            <div class="col-md-12">
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Пользователь</span>
-                    <input type="text" name="user" class="form-control" required>
+<div class="section">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="row full-height justify-content-center card shadow-sm p-4">
+            <div class="col-12 text-center align-self-center">
+                <div class="section text-center">
+                    <label for="reg-log"></label>
+                    <form method="post" class="g-3">
+                        <div class="card-3d-wrap mx-auto">
+                            <div class="card-3d-wrapper">
+                                <div class="card-front">
+                                    <div class="center-wrap">
+                                        <div class="section text-center">
+                                            <h4 class="mb-4 pb-3">Авторизация</h4>
+                                            <div class="col-md-12">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">Пользователь</span>
+                                                    <input type="text" name="user" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">Пароль</span>
+                                                    <input type="password" name="password" class="form-control"
+                                                        required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 text-center">
+                                                <button type="submit" name="sign-in"
+                                                    class="btn btn-primary">Войти</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <div class="col-md-12">
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Пароль</span>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="col-md-12 text-center">
-                <button type="submit" name="sign-in" class="btn btn-primary">Войти</button>
-            </div>
-
-        </form>
+        </div>
     </div>
+</div>
 
 </body>
 
