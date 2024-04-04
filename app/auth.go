@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type middleware struct {
@@ -27,9 +28,14 @@ const (
 
 // Создать Bearer токен (да, странный способ)
 func makeBearer(data string) string {
-	token := map[string]string{
-		"type": "Bearer",
-		"data": data,
+	token := struct {
+		TokenType string
+		Data      string
+		Timestamp int64
+	}{
+		TokenType: "Bearer",
+		Data:      data,
+		Timestamp: time.Now().Unix(),
 	}
 
 	jsonData, _ := json.Marshal(token)
@@ -63,7 +69,7 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 
 			cookie := &http.Cookie{
 				Name:  authorizationKey,
-				Value: makeBearer(password),
+				Value: session.Token,
 			}
 
 			http.SetCookie(w, cookie)
