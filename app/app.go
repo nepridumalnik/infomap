@@ -63,16 +63,24 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 	const defaultPath = "./ui/html/index.html"
 
 	var tmpl *template.Template
+	var err error
 
 	if r.URL.Path == "/" {
-		tmpl, _ = template.ParseFiles(defaultPath)
+		tmpl, err = template.ParseFiles(defaultPath)
 	} else {
-		tmpl, _ = template.ParseFiles(r.URL.Path)
+		tmpl, err = template.ParseFiles(r.URL.Path)
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	data := "Test Template Data"
+	err = tmpl.Execute(w, data)
 
-	tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (app *App) Run() error {
