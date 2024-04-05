@@ -58,12 +58,14 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 		result := m.storage.db.Where(data, "name", "password").Find(&user)
 
 		if result.RowsAffected == 1 {
-			session := session{Token: Sha512(password), UserID: user.Id}
-			result := m.storage.db.Find(&session).Where("password", "user_id")
+			session := session{UserID: user.Id}
+			result := m.storage.db.Find(&session).Where("user_id")
 
 			if result.Error != nil {
 				http.Error(w, result.Error.Error(), http.StatusBadRequest)
 			}
+
+			session.Token = makeBearer(password)
 
 			if result.RowsAffected == 0 {
 				m.storage.db.Create(&session)
