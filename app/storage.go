@@ -73,7 +73,7 @@ type storage struct {
 
 // Создать хранилище
 func NewStorage() (*storage, error) {
-	db, err := gorm.Open(sqlite.Open("data.db"))
+	db, err := gorm.Open(sqlite.Open(sqliteDbFile))
 
 	if err != nil {
 		return nil, err

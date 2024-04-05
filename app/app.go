@@ -84,7 +84,7 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) Run() error {
-	file, err := os.OpenFile("error_log.txt", os.O_RDWR|os.O_CREATE, 0666)
+	file, err := os.OpenFile(errLogFile, os.O_RDWR|os.O_CREATE, 0666)
 
 	if err != nil {
 		return err
