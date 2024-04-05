@@ -4,9 +4,9 @@ type Privilege uint8
 type Id uint64
 
 const (
-	Admin Privilege = iota
+	Unauthorized Privilege = iota
 	CommonUser
-	Unauthorized
+	Admin
 )
 
 type UserPrivilege struct {
