@@ -1,6 +1,7 @@
 package app
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -55,8 +56,23 @@ func (app *App) registerHandlers() {
 	app.router.PathPrefix("/styles").Methods("GET").Handler(cssHandler)
 
 	// Загрузка html
-	htmlHandler := http.StripPrefix("/", http.FileServer(http.Dir("./ui/html/")))
-	app.router.PathPrefix("/").Methods("GET").Handler(htmlHandler)
+	app.router.HandleFunc("/", app.commonHandler).Methods("GET", "POST")
+}
+
+func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
+	const defaultPath = "./ui/html/index.html"
+
+	var tmpl *template.Template
+
+	if r.URL.Path == "/" {
+		tmpl, _ = template.ParseFiles(defaultPath)
+	} else {
+		tmpl, _ = template.ParseFiles(r.URL.Path)
+	}
+
+	data := "Test Template Data"
+
+	tmpl.Execute(w, data)
 }
 
 func (app *App) Run() error {
