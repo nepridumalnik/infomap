@@ -7,10 +7,18 @@
 
     <title>Таблица</title>
     <link rel="stylesheet" href="styles/bootstrap.css">
+
+    <script src="js/third_party/axios.min.js"></script>
+    <script src="js/index.js"></script>
 </head>
 
 <body>
-    <table class="table table-striped table-hover">
+    <div class="float-end">
+        <input type="button" class="btn btn-primary" onclick="unauth()" value="Выйти">
+    </div>
+    <br>
+
+    <table class="table table-striped table-hover pd-t-0">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -31,11 +39,6 @@
                 <td>Jacob</td>
                 <td>Thornton</td>
                 <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
             </tr>
         </tbody>
     </table>
