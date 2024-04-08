@@ -12,10 +12,10 @@ const unauth = () => {
 // Отправка файла
 const uploadFile = () => {
     // Получаем форму по ID
-    const form = document.getElementById('uploadForm');
+    const form = document.getElementById('uploadForm')
 
     // Создаем объект FormData и добавляем файл из формы
-    const formData = new FormData(form);
+    const formData = new FormData(form)
 
     // Отправляем файл на сервер с помощью Axios
     axios.post('/upload', formData, {
@@ -24,9 +24,10 @@ const uploadFile = () => {
         }
     }).then((response) => {
         // Обрабатываем успешный ответ, если необходимо
-        console.log('Файл успешно загружен', response);
+        console.log('Файл успешно загружен', response)
+        form.reset()
     }).catch((error) => {
         // Обрабатываем ошибку, если необходимо
-        console.error('Ошибка при загрузке файла', error);
-    });
+        console.error('Ошибка при загрузке файла', error)
+    })
 }
