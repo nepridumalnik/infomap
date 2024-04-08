@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таблица</title>
 
+    <title>Таблица</title>
     <link rel="stylesheet" href="styles/bootstrap.css">
     <script src="js/third_party/axios.min.js"></script>
     <script src="js/index.js"></script>
@@ -21,12 +21,12 @@
 
     <div class="container mx-auto">
         <!-- Форма для загрузки файлов -->
-        <form action="/upload" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="fileInput" class="form-label">Выберите файл для загрузки:</label>
-                <input class="form-control" type="file" id="file" name="file">
+                <input class="form-control" type="file" id="fileInput" name="file">
             </div>
-            <button type="submit" class="btn btn-primary">Загрузить файл</button>
+            <input type="button" class="btn btn-primary" onclick="uploadFile()" value="Загрузить файл">
         </form>
 
         <br>
