@@ -2,7 +2,6 @@ package app
 
 import (
 	"bytes"
-	"container/list"
 	"errors"
 	"fmt"
 	"io"
@@ -48,6 +47,8 @@ type columns struct {
 	status        int
 	commentary    int
 }
+
+type tableRows []*tableRow
 
 // Строка таблицы
 type tableRow struct {
@@ -187,12 +188,16 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.moveRowsToDb(c, excel)
+	err = s.moveRowsToDb(c, excel)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
-// Обходит построчно таблицу и заносит данные в бд
-func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) {
-	l := list.New()
+// Получить строки из excel
+func (s *storage) extractRows(c *columns, excel *excelize.File) (tableRows, error) {
+	rows := make([]*tableRow, 0)
 
 	for i := 2; ; i++ {
 		request := fmt.Sprintf("%c%d", 'A'+c.fullName, i)
@@ -205,11 +210,30 @@ func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) {
 		row, err := s.getRowByIdx(c, excel, i)
 
 		if err != nil {
-			continue
+			return nil, err
 		}
 
-		l.PushBack(row)
+		rows = append(rows, row)
 	}
+
+	return rows, nil
+}
+
+// Обходит построчно таблицу и заносит данные в бд
+func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) error {
+	rows, err := s.extractRows(c, excel)
+
+	if err != nil {
+		return err
+	}
+
+	result := s.db.CreateInBatches(rows, len(rows))
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
 // Получить строку из excel
