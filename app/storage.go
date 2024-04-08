@@ -219,7 +219,7 @@ func (s *storage) extractRows(c *columns, excel *excelize.File) (tableRows, erro
 	return rows, nil
 }
 
-// Обходит построчно таблицу и заносит данные в бд
+// Обходит построчно таблицу и заносит данные в БД
 func (s *storage) moveRowsToDb(c *columns, excel *excelize.File) error {
 	rows, err := s.extractRows(c, excel)
 
