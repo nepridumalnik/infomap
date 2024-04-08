@@ -74,8 +74,9 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			cookie := &http.Cookie{
-				Name:  authorizationKey,
-				Value: session.Token,
+				Name:    authorizationKey,
+				Value:   session.Token,
+				Expires: time.Now().AddDate(0, 0, 3),
 			}
 
 			http.SetCookie(w, cookie)
