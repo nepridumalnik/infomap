@@ -14,6 +14,15 @@ const uploadFile = () => {
     // Получаем форму по ID
     const form = document.getElementById('uploadForm')
 
+    const file = fileInput.files[0];
+    if (!file) {
+        // Если файл не выбран, выводим сообщение об ошибке и завершаем функцию
+        const text = 'Файл не выбран'
+        alert(text)
+        console.error(text)
+        return;
+    }
+
     // Создаем объект FormData и добавляем файл из формы
     const formData = new FormData(form)
 
@@ -28,6 +37,8 @@ const uploadFile = () => {
         form.reset()
     }).catch((error) => {
         // Обрабатываем ошибку, если необходимо
+        const text = 'Ошибка при загрузке файла'
+        alert('Ошибка при загрузке файла', error)
         console.error('Ошибка при загрузке файла', error)
     })
 }

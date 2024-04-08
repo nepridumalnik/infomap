@@ -24,7 +24,8 @@
         <form id="uploadForm" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="fileInput" class="form-label">Выберите файл для загрузки:</label>
-                <input class="form-control" type="file" id="fileInput" name="file">
+                <input class="form-control" type="file" id="fileInput" name="file"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
             </div>
             <input type="button" class="btn btn-primary" onclick="uploadFile()" value="Загрузить файл">
         </form>
