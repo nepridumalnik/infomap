@@ -10,12 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type App struct {
-	router  *mux.Router
-	storage *storage
-	address string
-}
-
 func CreateApp(address string) (*App, error) {
 	storage, err := NewStorage()
 
@@ -37,7 +31,7 @@ func CreateApp(address string) (*App, error) {
 // Регистрация всех обработчиков
 func (app *App) registerHandlers() {
 	// Проверка авторизации
-	mw := &middleware{storage: app.storage}
+	mw := &authMiddleware{storage: app.storage}
 	app.router.Use(mw.authMiddleware)
 
 	// Обработчик авторизации

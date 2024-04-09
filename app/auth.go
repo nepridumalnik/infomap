@@ -7,24 +7,7 @@ import (
 	"time"
 )
 
-type middleware struct {
-	storage *storage
-}
 
-type session struct {
-	Id    Id `gorm:"primaryKey"`
-	Token string
-
-	// Для связи с пользователями
-	UserID Id   `gorm:"unique"`
-	User   User `gorm:"foreignKey:UserID"`
-}
-
-const (
-	authorizationKey = "Authorization-Token"
-	allowedPath      = "/auth"
-	allowedPathHtml  = "./ui/html" + allowedPath + ".html"
-)
 
 // Создать Bearer токен (да, странный способ)
 func makeBearer(data string) string {
@@ -43,7 +26,7 @@ func makeBearer(data string) string {
 }
 
 // Обработчик авторизации
-func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
+func (m *authMiddleware) authHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		http.ServeFile(w, r, allowedPathHtml)
@@ -88,7 +71,7 @@ func (m *middleware) authHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (m *middleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
+func (m *authMiddleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := r.Cookie(authorizationKey)
 
 	if err != nil || token.Value == "" {
@@ -105,7 +88,7 @@ func (m *middleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Пока тестовая реализация проверки, чтобы было перед глазами как правильно создавать cookie
-func (m *middleware) authMiddleware(next http.Handler) http.Handler {
+func (m *authMiddleware) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if m.safePath(&r.URL.Path) {
 			next.ServeHTTP(w, r)
@@ -136,6 +119,6 @@ func (m *middleware) authMiddleware(next http.Handler) http.Handler {
 }
 
 // Проверка допустимых путей
-func (m *middleware) safePath(url *string) bool {
+func (m *authMiddleware) safePath(url *string) bool {
 	return *url == allowedPath || strings.HasSuffix(*url, ".css") || strings.HasSuffix(*url, ".js")
 }

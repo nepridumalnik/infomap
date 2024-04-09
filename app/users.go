@@ -1,31 +1,11 @@
 package app
 
-type Privilege uint8
-type Id uint64
-
-const (
-	Unauthorized Privilege = iota
-	CommonUser
-	Admin
-)
-
-type UserPrivilege struct {
-	privilege Privilege
-}
-
-type User struct {
-	Id        Id `gorm:"primaryKey"`
-	Privilege Privilege
-	Name      string `gorm:"unique"`
-	Password  string
-}
-
 func (up *UserPrivilege) IsAdmin() bool {
-	return up.privilege == Admin
+	return up.privilege == PrivilegeAdmin
 }
 
 func (up *UserPrivilege) IsUnauthorized() bool {
-	return up.privilege == Unauthorized
+	return up.privilege == PrivilegeUnauthorized
 }
 
 func NewUserPrivilege(p Privilege, id Id) *UserPrivilege {
