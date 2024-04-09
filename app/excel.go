@@ -7,7 +7,7 @@ import (
 
 // Получить строки из excel
 func (s *storage) extractRows(c *columns, excel *excelize.File) (tableRows, error) {
-	rows := make([]*tableRow, 0)
+	rows := tableRows{}
 
 	for i := 2; ; i++ {
 		request := fmt.Sprintf("%c%d", 'A'+c.fullName, i)

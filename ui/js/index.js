@@ -9,18 +9,30 @@ const unauth = () => {
     })
 }
 
+// Загрузка страницы
+const pagination = () => {
+    axios.post('/get_page', {
+        offset: 0,
+        limit: 10
+    }).then((response) => {
+        console.log(response)
+    }).catch((error) => {
+        console.log(error)
+    })
+}
+
 // Отправка файла
 const uploadFile = () => {
     // Получаем форму по ID
     const form = document.getElementById('uploadForm')
 
-    const file = fileInput.files[0];
+    const file = fileInput.files[0]
     if (!file) {
         // Если файл не выбран, выводим сообщение об ошибке и завершаем функцию
         const text = 'Файл не выбран'
         alert(text)
         console.error(text)
-        return;
+        return
     }
 
     // Создаем объект FormData и добавляем файл из формы

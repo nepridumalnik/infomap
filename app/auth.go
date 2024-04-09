@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-
-
 // Создать Bearer токен (да, странный способ)
 func makeBearer(data string) string {
 	token := struct {
@@ -29,6 +27,13 @@ func makeBearer(data string) string {
 func (m *authMiddleware) authHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
+		_, err := m.isAuthorized(r)
+
+		if err != nil {
+			http.ServeFile(w, r, allowedPathHtml)
+			return
+		}
+
 		http.ServeFile(w, r, allowedPathHtml)
 
 	case "POST":
@@ -40,41 +45,43 @@ func (m *authMiddleware) authHandler(w http.ResponseWriter, r *http.Request) {
 
 		result := m.storage.db.Where(data, "name", "password").Find(&user)
 
-		if result.RowsAffected == 1 {
-			session := session{UserID: user.Id}
-			result := m.storage.db.Find(&session).Where("user_id")
-
-			if result.Error != nil {
-				http.Error(w, result.Error.Error(), http.StatusBadRequest)
-			}
-
-			session.Token = makeBearer(password)
-
-			if result.RowsAffected == 0 {
-				m.storage.db.Create(&session)
-			} else {
-				m.storage.db.Save(&session)
-			}
-
-			cookie := &http.Cookie{
-				Name:    authorizationKey,
-				Value:   session.Token,
-				Expires: time.Now().AddDate(0, 0, 3),
-			}
-
-			http.SetCookie(w, cookie)
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+		if result.RowsAffected != 1 {
+			http.Error(w, "wrong data", http.StatusUnauthorized)
 			return
 		}
 
-		http.Error(w, "wrong data", http.StatusUnauthorized)
+		session := session{UserID: user.Id}
+		result = m.storage.db.Find(&session).Where("user_id")
+
+		if result.Error != nil {
+			http.Error(w, result.Error.Error(), http.StatusBadRequest)
+		}
+
+		session.Token = makeBearer(password)
+
+		if result.RowsAffected == 0 {
+			m.storage.db.Create(&session)
+		} else {
+			m.storage.db.Save(&session)
+		}
+
+		cookie := &http.Cookie{
+			Name:    authorizationKey,
+			Value:   session.Token,
+			Expires: time.Now().AddDate(0, 0, 3),
+		}
+
+		http.SetCookie(w, cookie)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
+// Разлогинивание
 func (m *authMiddleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
-	token, err := r.Cookie(authorizationKey)
+	token, err := m.isAuthorized(r)
 
 	if err != nil || token.Value == "" {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -85,6 +92,17 @@ func (m *authMiddleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
 	m.storage.db.Delete(&session{Token: token.Value}, "token")
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// Авторизован ли пользователь
+func (m *authMiddleware) isAuthorized(r *http.Request) (*http.Cookie, error) {
+	token, err := r.Cookie(authorizationKey)
+
+	if err != nil || token.Value == "" {
+		return nil, err
+	}
+
+	return token, nil
 }
 
 // Пока тестовая реализация проверки, чтобы было перед глазами как правильно создавать cookie

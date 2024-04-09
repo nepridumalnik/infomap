@@ -39,7 +39,10 @@ func (app *App) registerHandlers() {
 	app.router.HandleFunc("/unauth", mw.unauthHandler).Methods("POST")
 
 	// Загрузка файлов
-	app.storage.RegisterHandlers(app.router.Path("/upload").Methods("POST"))
+	app.router.Path("/upload").Methods("POST").HandlerFunc(app.storage.upload)
+
+	// Получение страниц
+	app.router.Path("/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
 
 	// Загрузка скриптов
 	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))

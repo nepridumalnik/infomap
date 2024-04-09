@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -11,7 +12,6 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/xuri/excelize/v2"
 
-	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -31,11 +31,6 @@ func NewStorage() (*storage, error) {
 	db.Create(NewUser(PrivilegeAdmin, "admin", "minda"))
 
 	return &storage{db: db}, nil
-}
-
-// Регистрация обработчиков
-func (s *storage) RegisterHandlers(r *mux.Route) {
-	r.HandlerFunc(s.upload)
 }
 
 // Извлечь excel файл из multipart данных
@@ -136,4 +131,50 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+func (s *storage) getPage(w http.ResponseWriter, r *http.Request) {
+	var query = struct {
+		Offset uint64 `json:"offset"`
+		Limit  uint64 `json:"limit"`
+	}{}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.Unmarshal(body, &query)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	rows, err := s.getRows(query.Offset, query.Limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Игнорируем ошибку
+	object, _ := json.Marshal(rows)
+	w.Write(object)
+}
+
+func (s *storage) getRows(offset uint64, limit uint64) (*[]tableRow, error) {
+	if limit == 0 {
+		return nil, errors.New("no limits")
+	}
+
+	var rows []tableRow
+
+	result := s.db.Offset(int(offset)).Limit(int(limit)).Find(&rows)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &rows, nil
 }
