@@ -19,7 +19,7 @@ const (
 const (
 	authorizationKey = "Authorization-Token"
 	allowedPath      = "/auth"
-	allowedPathHtml  = "./ui/html" + allowedPath + ".html"
+	allowedPathHtml  = "./static/html" + allowedPath + ".html"
 )
 
 // Столбцы таблицы

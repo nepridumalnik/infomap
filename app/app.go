@@ -45,11 +45,11 @@ func (app *App) registerHandlers() {
 	app.router.Path("/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
 
 	// Загрузка скриптов
-	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./ui/js/")))
+	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./static/js/")))
 	app.router.PathPrefix("/js").Methods("GET").Handler(jsHandler)
 
 	// Загрузка стилей
-	cssHandler := http.StripPrefix("/styles/", http.FileServer(http.Dir("./ui/styles/")))
+	cssHandler := http.StripPrefix("/styles/", http.FileServer(http.Dir("./static/styles/")))
 	app.router.PathPrefix("/styles").Methods("GET").Handler(cssHandler)
 
 	// Загрузка html
@@ -57,7 +57,7 @@ func (app *App) registerHandlers() {
 }
 
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
-	const defaultPath = "./ui/html/index.html"
+	const defaultPath = "./static/html/index.html"
 
 	var tmpl *template.Template
 	var err error
