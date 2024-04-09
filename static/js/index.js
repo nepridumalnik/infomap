@@ -54,3 +54,40 @@ const uploadFile = () => {
         console.error('Ошибка при загрузке файла', error)
     })
 }
+
+const dataSet = [
+    {
+        "name": "Tiger Nixon",
+        "position": "System Architect",
+        "salary": "$3,120",
+        "office": "Edinburgh",
+    },
+    {
+        "name": "Garrett Winters",
+        "position": "Director",
+        "salary": "$5,300",
+        "office": "Edinburgh",
+    }
+]
+
+
+const columns = [
+    { data: 'name' },
+    { data: 'position' },
+    { data: 'salary' },
+    { data: 'office' }
+]
+
+$(document).ready(function () {
+    $('#mainTable').DataTable(
+        {
+            data: dataSet,
+            columns: [
+                { data: 'name' },
+                { data: 'position' },
+                { data: 'salary' },
+                { data: 'office' }
+            ]
+        }
+    );
+});

@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="styles/dataTables.min.css">
+    <script src="js/third_party/jquery.min.js"></script>
+    <script src="js/third_party/dataTables.min.js"></script>
+
     <title>Таблица</title>
     <link rel="stylesheet" href="styles/bootstrap.css">
     <script src="js/third_party/axios.min.js"></script>
@@ -12,6 +16,7 @@
 </head>
 
 <body>
+
     <div class="float-end">
         <input type="button" class="btn btn-primary" onclick="unauth()" value="Выйти">
         <input type="button" class="btn btn-primary" onclick="pagination()" value="Тест пагинации">
@@ -33,30 +38,19 @@
 
         <br>
 
-        <table class="table table-striped table-hover pd-t-0">
+        <table id="mainTable" class="display">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Имя</th>
-                    <th scope="col">Фамилия</th>
-                    <th scope="col">Обращение</th>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                    <th>Column 2</th>
+                    <th>Column 2</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
             </tbody>
         </table>
+
     </div>
 </body>
 
