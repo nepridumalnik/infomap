@@ -59,8 +59,8 @@ func (app *App) registerHandlers() {
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 	const defaultPath = "./static/html/index.html.tmpl"
 
-	var tmpl *template.Template
-	var err error
+	var tmpl *template.Template = nil
+	var err error = nil
 
 	if r.URL.Path == "/" {
 		tmpl, err = template.ParseFiles(defaultPath)
