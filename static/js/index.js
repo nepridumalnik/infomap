@@ -55,22 +55,6 @@ const uploadFile = () => {
     })
 }
 
-// const dataSet = [
-//     {
-//         'name': 'Tiger Nixon',
-//         'position': 'System Architect',
-//         'salary': '$3,120',
-//         'office': 'Edinburgh',
-//     },
-//     {
-//         'name': 'Garrett Winters',
-//         'position': 'Director',
-//         'salary': '$5,300',
-//         'office': 'Edinburgh',
-//     }
-// ]
-
-
 const columns = [
     { data: 'Томская область' },
     { data: 'Регион' },

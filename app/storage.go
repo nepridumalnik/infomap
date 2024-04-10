@@ -98,11 +98,13 @@ func (s *storage) excelToColumns(excel *excelize.File) (*columns, error) {
 	return c, nil
 }
 
+// Обработка запросов таблицы
 func (s *storage) table(w http.ResponseWriter, r *http.Request) {
+	// https://datatables.net/manual/server-side
+	// https://datatables.net/reference/option/serverSide
 	query := r.URL.Query()
 	fmt.Println(query)
 	w.Write([]byte(`{"data":{"length":0}}`))
-	// s.getPage(w, r)
 }
 
 // Загрузить excel файл на сервер
