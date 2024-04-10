@@ -98,6 +98,13 @@ func (s *storage) excelToColumns(excel *excelize.File) (*columns, error) {
 	return c, nil
 }
 
+func (s *storage) table(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	fmt.Println(query)
+	w.Write([]byte(`{"data":{"length":0}}`))
+	// s.getPage(w, r)
+}
+
 // Загрузить excel файл на сервер
 func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(limitation)

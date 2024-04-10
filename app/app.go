@@ -55,6 +55,9 @@ func (app *App) registerHandlers() {
 
 	// Получение страниц
 	app.router.Path("/api/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
+
+	// Таблица
+	app.router.Path("/api/table").HandlerFunc(app.storage.table)
 }
 
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {

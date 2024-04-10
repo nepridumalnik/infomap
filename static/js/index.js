@@ -1,11 +1,11 @@
 // Деавторизация
 const unauth = () => {
-    console.log("unauth")
-    axios.post("/unauth", {}).then((response) => {
-        console.log("Response: " + response)
+    console.log('unauth')
+    axios.post('/unauth', {}).then((response) => {
+        console.log('Response: ' + response)
         window.location.reload()
     }).catch((error) => {
-        console.log("Error: " + error)
+        console.log('Error: ' + error)
     })
 }
 
@@ -55,34 +55,45 @@ const uploadFile = () => {
     })
 }
 
-const dataSet = [
-    {
-        "name": "Tiger Nixon",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "office": "Edinburgh",
-    },
-    {
-        "name": "Garrett Winters",
-        "position": "Director",
-        "salary": "$5,300",
-        "office": "Edinburgh",
-    }
-]
+// const dataSet = [
+//     {
+//         'name': 'Tiger Nixon',
+//         'position': 'System Architect',
+//         'salary': '$3,120',
+//         'office': 'Edinburgh',
+//     },
+//     {
+//         'name': 'Garrett Winters',
+//         'position': 'Director',
+//         'salary': '$5,300',
+//         'office': 'Edinburgh',
+//     }
+// ]
 
 
 const columns = [
-    { data: 'name' },
-    { data: 'position' },
-    { data: 'salary' },
-    { data: 'office' }
+    { data: 'Томская область' },
+    { data: 'Регион' },
+    { data: 'Назначен ответственный' },
+    { data: 'Страница подтверждена' },
+    { data: 'Ссылка на официальную страницу Вконтакте' },
+    { data: 'Ссылка на официальную страницу Одноклассники' },
+    { data: 'Ссылка на официальную страницу Telegram' },
+    { data: 'Официальная страница не ведется на основании' },
+    { data: 'Комментарий по НПА' },
+    { data: 'Полное наименование объекта' },
+    { data: 'ОГРН' },
+    { data: 'Статус' },
+    { data: 'Комментарий' },
 ]
 
 $(document).ready(function () {
     $('#mainTable').DataTable(
         {
-            data: dataSet,
-            columns: columns
+            // data: dataSet,
+            columns: columns,
+            ajax: '/api/table',
+            serverSide: true,
         }
     );
 });
