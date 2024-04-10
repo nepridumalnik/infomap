@@ -60,11 +60,6 @@ type User struct {
 	Password  string
 }
 
-// Уровень привилегии
-type UserPrivilege struct {
-	privilege Privilege
-}
-
 // Промежуточное состояние для авторизации
 type authMiddleware struct {
 	storage *storage
