@@ -31,12 +31,12 @@ func CreateApp(address string) (*App, error) {
 // Регистрация всех обработчиков
 func (app *App) registerHandlers() {
 	// Проверка авторизации
-	mw := &authMiddleware{storage: app.storage}
-	app.router.Use(mw.authMiddleware)
+	app.m = &authMiddleware{storage: app.storage}
+	app.router.Use(app.m.authMiddleware)
 
 	// Обработчик авторизации
-	app.router.HandleFunc("/auth", mw.authHandler).Methods("GET", "POST")
-	app.router.HandleFunc("/unauth", mw.unauthHandler).Methods("POST")
+	app.router.HandleFunc("/auth", app.m.authHandler).Methods("GET", "POST")
+	app.router.HandleFunc("/unauth", app.m.unauthHandler).Methods("POST")
 
 	// Загрузка файлов
 	app.router.Path("/upload").Methods("POST").HandlerFunc(app.storage.upload)
@@ -73,8 +73,15 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := app.m.getUser(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data := struct {
-		Data []string
+		Data  []string
+		Admin bool
 	}{
 		Data: []string{
 			mainList,
@@ -91,6 +98,7 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 			status,
 			commentary,
 		},
+		Admin: (user.Privilege == PrivilegeAdmin),
 	}
 
 	err = tmpl.Execute(w, data)

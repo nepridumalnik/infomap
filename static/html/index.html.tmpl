@@ -22,8 +22,10 @@
     </div>
     <br>
 
+
     <div class="container mx-auto">
         <!-- Форма для загрузки файлов -->
+        {{ if .Admin }}
         <form id="uploadForm" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="fileInput" class="form-label">Выберите файл для загрузки:</label>
@@ -32,15 +34,16 @@
             </div>
             <input type="button" class="btn btn-primary" onclick="uploadFile()" value="Загрузить файл">
         </form>
+        {{ end }}
 
         <br>
 
-        <table id="mainTable" class="display">
+        <table id="mainTable" class="display table table-hover">
             <thead>
                 <tr>
-                    {{range .Data}}
+                    {{ range .Data }}
                     <th>{{.}}</th>
-                    {{end}}
+                    {{ end }}
                 </tr>
             </thead>
             <tbody>

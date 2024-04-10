@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -27,7 +28,7 @@ func makeBearer(data string) string {
 func (m *authMiddleware) authHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		_, err := m.isAuthorized(r)
+		_, err := m.getToken(r)
 
 		if err != nil {
 			http.ServeFile(w, r, allowedPathHtml)
@@ -78,7 +79,7 @@ func (m *authMiddleware) authHandler(w http.ResponseWriter, r *http.Request) {
 
 // Разлогинивание
 func (m *authMiddleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
-	token, err := m.isAuthorized(r)
+	token, err := m.getToken(r)
 
 	if err != nil || token.Value == "" {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -94,8 +95,35 @@ func (m *authMiddleware) unauthHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+func (m *authMiddleware) getUser(r *http.Request) (*User, error) {
+	token, err := m.getToken(r)
+	if err != nil || token.Value == "" {
+		return nil, err
+	}
+
+	// Получение ID пользователя по токену
+	session := &session{Token: token.Value}
+	result := m.storage.db.Find(session).Where("token")
+	if result.Error != nil {
+		return nil, result.Error
+	} else if result.RowsAffected != 1 {
+		return nil, errors.New("session not found")
+	}
+
+	// Получение данных пользователя по ID
+	user := &User{Id: session.UserID}
+	result = m.storage.db.Find(user).Where("id")
+	if result.Error != nil {
+		return nil, result.Error
+	} else if result.RowsAffected != 1 {
+		return nil, errors.New("user not found")
+	}
+
+	return user, nil
+}
+
 // Авторизован ли пользователь
-func (m *authMiddleware) isAuthorized(r *http.Request) (*http.Cookie, error) {
+func (m *authMiddleware) getToken(r *http.Request) (*http.Cookie, error) {
 	token, err := r.Cookie(authorizationKey)
 
 	if err != nil || token.Value == "" {

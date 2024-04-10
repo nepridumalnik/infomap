@@ -85,4 +85,5 @@ type App struct {
 	router  *mux.Router
 	storage *storage
 	address string
+	m       *authMiddleware
 }
