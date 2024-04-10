@@ -11,7 +11,7 @@ const unauth = () => {
 
 // Загрузка страницы
 const pagination = () => {
-    axios.post('/get_page', {
+    axios.post('/api/get_page', {
         offset: 0,
         limit: 10
     }).then((response) => {
@@ -39,7 +39,7 @@ const uploadFile = () => {
     const formData = new FormData(form)
 
     // Отправляем файл на сервер с помощью Axios
-    axios.post('/upload', formData, {
+    axios.post('/api/upload', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

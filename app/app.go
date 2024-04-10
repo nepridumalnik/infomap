@@ -38,12 +38,6 @@ func (app *App) registerHandlers() {
 	app.router.HandleFunc("/auth", app.m.authHandler).Methods("GET", "POST")
 	app.router.HandleFunc("/unauth", app.m.unauthHandler).Methods("POST")
 
-	// Загрузка файлов
-	app.router.Path("/upload").Methods("POST").HandlerFunc(app.storage.upload)
-
-	// Получение страниц
-	app.router.Path("/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
-
 	// Загрузка скриптов
 	jsHandler := http.StripPrefix("/js/", http.FileServer(http.Dir("./static/js/")))
 	app.router.PathPrefix("/js").Methods("GET").Handler(jsHandler)
@@ -53,7 +47,14 @@ func (app *App) registerHandlers() {
 	app.router.PathPrefix("/styles").Methods("GET").Handler(cssHandler)
 
 	// Загрузка html
-	app.router.HandleFunc("/", app.commonHandler).Methods("GET", "POST")
+	app.router.HandleFunc("/", app.commonHandler).Methods("GET")
+
+	// API
+	// Загрузка файлов
+	app.router.Path("/api/upload").Methods("POST").HandlerFunc(app.storage.upload)
+
+	// Получение страниц
+	app.router.Path("/api/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
 }
 
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
