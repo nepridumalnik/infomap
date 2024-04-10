@@ -82,12 +82,7 @@ $(document).ready(function () {
     $('#mainTable').DataTable(
         {
             data: dataSet,
-            columns: [
-                { data: 'name' },
-                { data: 'position' },
-                { data: 'salary' },
-                { data: 'office' }
-            ]
+            columns: columns
         }
     );
 });
