@@ -16,14 +16,11 @@
 </head>
 
 <body>
-
     <div class="float-end">
         <input type="button" class="btn btn-primary" onclick="unauth()" value="Выйти">
         <input type="button" class="btn btn-primary" onclick="pagination()" value="Тест пагинации">
     </div>
     <br>
-
-    <h1>{{.}}</h1>
 
     <div class="container mx-auto">
         <!-- Форма для загрузки файлов -->
@@ -41,10 +38,9 @@
         <table id="mainTable" class="display">
             <thead>
                 <tr>
-                    <th>Column 1</th>
-                    <th>Column 2</th>
-                    <th>Column 2</th>
-                    <th>Column 2</th>
+                    {{range .Data}}
+                    <th>{{.}}</th>
+                    {{end}}
                 </tr>
             </thead>
             <tbody>

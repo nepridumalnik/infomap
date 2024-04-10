@@ -57,7 +57,7 @@ func (app *App) registerHandlers() {
 }
 
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
-	const defaultPath = "./static/html/index.html"
+	const defaultPath = "./static/html/index.html.tmpl"
 
 	var tmpl *template.Template
 	var err error
@@ -70,9 +70,29 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	data := "Test Template Data"
+	data := struct {
+		Data []string
+	}{
+		Data: []string{
+			mainList,
+			region,
+			responsible,
+			verified,
+			vkUrl,
+			okUrl,
+			tgUrl,
+			reason,
+			commentaryNpa,
+			fullName,
+			ogrn,
+			status,
+			commentary,
+		},
+	}
+
 	err = tmpl.Execute(w, data)
 
 	if err != nil {
