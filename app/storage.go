@@ -8,6 +8,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"reflect"
 
 	"github.com/glebarez/sqlite"
 	"github.com/xuri/excelize/v2"
@@ -98,15 +99,6 @@ func (s *storage) excelToColumns(excel *excelize.File) (*columns, error) {
 	return c, nil
 }
 
-// Обработка запросов таблицы
-func (s *storage) table(w http.ResponseWriter, r *http.Request) {
-	// https://datatables.net/manual/server-side
-	// https://datatables.net/reference/option/serverSide
-	query := r.URL.Query()
-	fmt.Println(query)
-	w.Write([]byte(`{"data":{"length":0}}`))
-}
-
 // Загрузить excel файл на сервер
 func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(limitation)
@@ -142,34 +134,58 @@ func (s *storage) upload(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *storage) getPage(w http.ResponseWriter, r *http.Request) {
-	var query = struct {
-		Offset uint64 `json:"offset"`
-		Limit  uint64 `json:"limit"`
-	}{}
+// Получить всю таблицу
+func (s *storage) getTable(w http.ResponseWriter, r *http.Request) {
+	var rows []tableRow
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	result := s.db.Find(&rows)
+
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusBadRequest)
 	}
 
-	err = json.Unmarshal(body, &query)
+	arr := rowsToString(rows)
+	data, _ := json.Marshal(arr)
+	w.Write(data)
+}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+func rowsToString(rows []tableRow) [][]string {
+	var rowsArr [][]string
+
+	for _, row := range rows {
+		// Преобразуем каждую структуру в массив строк
+		data := rowToString(row)
+
+		// Добавляем массив строк в итоговый массив
+		rowsArr = append(rowsArr, data)
 	}
 
-	rows, err := s.getRows(query.Offset, query.Limit)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	return rowsArr
+}
+
+// Строка в массив
+func rowToString(s interface{}) []string {
+	// Получаем тип структуры
+	t := reflect.TypeOf(s)
+
+	// Получаем значение структуры
+	v := reflect.ValueOf(s)
+
+	// Создаем массив строк
+	var paramArr []string
+
+	// Перебираем все поля структуры
+	for i := 0; i < t.NumField(); i++ {
+		// Получаем значение поля
+		fieldValue := v.Field(i)
+
+		data := fmt.Sprintf("\"%v\"", fieldValue.Interface())
+
+		// Преобразуем значение поля в строку и добавляем его в массив
+		paramArr = append(paramArr, fmt.Sprintf("%v", data))
 	}
 
-	// Игнорируем ошибку
-	object, _ := json.Marshal(rows)
-	w.Write(object)
+	return paramArr
 }
 
 func (s *storage) getRows(offset uint64, limit uint64) (*[]tableRow, error) {

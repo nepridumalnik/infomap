@@ -1,3 +1,13 @@
+// Обработка загрузки страницы
+const onPageLoaded = () => {
+    getTable().then((response) => {
+        let ins = $('#mainTable').DataTable()
+        ins.clear()
+        ins.rows.add(response.data)
+        ins.draw()
+    })
+}
+
 // Деавторизация
 const unauth = () => {
     console.log('unauth')
@@ -9,16 +19,14 @@ const unauth = () => {
     })
 }
 
-// Загрузка страницы
-const pagination = () => {
-    axios.post('/api/get_page', {
-        offset: 0,
-        limit: 10
-    }).then((response) => {
-        console.log(response)
-    }).catch((error) => {
+// Получить таблицу
+const getTable = async () => {
+    try {
+        const response = await axios.get('/api/get_table')
+        return response
+    } catch (error) {
         console.log(error)
-    })
+    }
 }
 
 // Отправка файла
@@ -55,29 +63,6 @@ const uploadFile = () => {
     })
 }
 
-const columns = [
-    { data: 'Томская область' },
-    { data: 'Регион' },
-    { data: 'Назначен ответственный' },
-    { data: 'Страница подтверждена' },
-    { data: 'Ссылка на официальную страницу Вконтакте' },
-    { data: 'Ссылка на официальную страницу Одноклассники' },
-    { data: 'Ссылка на официальную страницу Telegram' },
-    { data: 'Официальная страница не ведется на основании' },
-    { data: 'Комментарий по НПА' },
-    { data: 'Полное наименование объекта' },
-    { data: 'ОГРН' },
-    { data: 'Статус' },
-    { data: 'Комментарий' },
-]
-
-$(document).ready(function () {
-    $('#mainTable').DataTable(
-        {
-            // data: dataSet,
-            columns: columns,
-            ajax: '/api/table',
-            serverSide: true,
-        }
-    );
-});
+$(document).ready(() => {
+    onPageLoaded()
+})

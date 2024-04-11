@@ -54,7 +54,7 @@ func (app *App) registerHandlers() {
 	app.router.Path("/api/upload").Methods("POST").HandlerFunc(app.storage.upload)
 
 	// Получение страниц
-	app.router.Path("/api/get_page").Methods("POST").HandlerFunc(app.storage.getPage)
+	app.router.Path("/api/get_table").Methods("GET").HandlerFunc(app.storage.getTable)
 
 	// Таблица
 	app.router.Path("/api/table").HandlerFunc(app.storage.table)
