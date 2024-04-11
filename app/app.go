@@ -55,9 +55,6 @@ func (app *App) registerHandlers() {
 
 	// Получение страниц
 	app.router.Path("/api/get_table").Methods("GET").HandlerFunc(app.storage.getTable)
-
-	// Таблица
-	app.router.Path("/api/table").HandlerFunc(app.storage.table)
 }
 
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
