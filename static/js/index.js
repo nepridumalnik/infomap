@@ -1,7 +1,38 @@
+// Переводы
+// https://datatables.net/reference/option/language
+const language = {
+    search: 'Поиск',
+    processing: 'Обработка запроса',
+    info: 'Показать от _START_ до _END_ из _TOTAL_ записей',
+    thousands: '.',
+    infoFiltered: '[отфильтровано _MAX_ записей]',
+    lengthMenu: '_MENU_ записей на странице',
+    zeroRecords: 'Совпадений не обнаружено',
+    emptyTable: 'В таблице пока нет записей',
+    infoEmpty: 'Записей нет',
+    paginate: {
+        'first': 'Первая',
+        'last': 'Последняя',
+        'next': 'Следующая',
+        'previous': 'Предыдущая',
+    },
+    aria: {
+        'orderable': 'Сортировать по этому столбцу',
+        'orderableReverse': 'Сортировать по этому столбцу в обратном порядке',
+    },
+}
+
 // Обработка загрузки страницы
-const onPageLoaded = () => {
+const init = () => {
     getTable().then((response) => {
-        let ins = $('#mainTable').DataTable()
+        let ins = $('#mainTable').DataTable({
+            language: language
+        })
+
+        ins.language = {
+            search: 'Поиск'
+        }
+
         ins.clear()
         ins.rows.add(response.data)
         ins.draw()
@@ -64,5 +95,5 @@ const uploadFile = () => {
 }
 
 $(document).ready(() => {
-    onPageLoaded()
+    init()
 })
