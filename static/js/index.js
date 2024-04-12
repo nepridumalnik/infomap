@@ -22,11 +22,39 @@ const language = {
     },
 }
 
+// Завершение инициализации
+const initComplete = () => {
+    console.log('initComplete()')
+}
+
+// Завершение инициализации
+const infoCallback = (settings, start, end, max, total, pre) => {
+    console.log('infoCallback()')
+    console.log('settings: ' + settings)
+    console.log('start: ' + start)
+    console.log('end: ' + end)
+    console.log('max: ' + max)
+    console.log('total: ' + total)
+    console.log('pre: ' + pre)
+
+    const tbody = document.querySelector('#mainTable tbody')
+    const rows = tbody.querySelectorAll('tr')
+
+    rows.forEach(function (row) {
+        var cells = row.querySelectorAll('td')
+        cells.forEach(function (cell) {
+            console.log(cell.textContent)
+        })
+    })
+}
+
 // Обработка загрузки страницы
 const init = () => {
     getTable().then((response) => {
         let ins = $('#mainTable').DataTable({
-            language: language
+            language: language,
+            initComplete: initComplete,
+            infoCallback: infoCallback,
         })
 
         ins.language = {
