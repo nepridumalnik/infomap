@@ -89,12 +89,24 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 			region,
 			responsible,
 			verified,
-			vkUrl,
-			okUrl,
-			tgUrl,
-			reason,
-			commentaryNpa,
-			fullName,
+
+			// vkUrl,
+			"ВКонтакте",
+
+			// okUrl,
+			"Одноклассники",
+
+			// tgUrl,
+			"Telegram",
+
+			// reason,
+			"Страница не ведётся",
+
+			// commentaryNpa,
+			"НПА",
+
+			// fullName,
+			"Наименование",
 			ogrn,
 			status,
 			commentary,
