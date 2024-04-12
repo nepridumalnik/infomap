@@ -51,15 +51,11 @@ const infoCallback = (settings, start, end, max, total, pre) => {
 // Обработка загрузки страницы
 const init = () => {
     getTable().then((response) => {
-        let ins = $('#mainTable').DataTable({
+        const ins = $('#mainTable').DataTable({
             language: language,
             initComplete: initComplete,
             infoCallback: infoCallback,
         })
-
-        ins.language = {
-            search: 'Поиск'
-        }
 
         ins.clear()
         ins.rows.add(response.data)
