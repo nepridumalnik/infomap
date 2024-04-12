@@ -85,7 +85,7 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 		Admin bool
 	}{
 		Data: []string{
-			mainList,
+			// mainList,
 			region,
 			responsible,
 			verified,

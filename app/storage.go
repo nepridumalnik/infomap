@@ -179,27 +179,17 @@ func rowToString(s interface{}) []string {
 		// Получаем значение поля
 		fieldValue := v.Field(i)
 
-		data := fmt.Sprintf("\"%v\"", fieldValue.Interface())
+		typeName := fieldValue.Type().Name()
+		if typeName == "Id" {
+			continue
+		}
+
+		value := fieldValue.Interface()
+		data := fmt.Sprintf("\"%v\"", value)
 
 		// Преобразуем значение поля в строку и добавляем его в массив
 		paramArr = append(paramArr, fmt.Sprintf("%v", data))
 	}
 
 	return paramArr
-}
-
-func (s *storage) getRows(offset uint64, limit uint64) (*[]tableRow, error) {
-	if limit == 0 {
-		return nil, errors.New("no limits")
-	}
-
-	var rows []tableRow
-
-	result := s.db.Offset(int(offset)).Limit(int(limit)).Find(&rows)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return &rows, nil
 }
