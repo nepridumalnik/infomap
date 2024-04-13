@@ -93,8 +93,8 @@ const uploadFile = () => {
     if (!file) {
         // Если файл не выбран, выводим сообщение об ошибке и завершаем функцию
         const text = 'Файл не выбран'
-        alert(text)
-        console.error(text)
+        alert(text, error)
+        console.error(text, error)
         return
     }
 
@@ -113,8 +113,8 @@ const uploadFile = () => {
     }).catch((error) => {
         // Обрабатываем ошибку, если необходимо
         const text = 'Ошибка при загрузке файла'
-        alert('Ошибка при загрузке файла', error)
-        console.error('Ошибка при загрузке файла', error)
+        alert(text, error)
+        console.error(text, error)
     })
 }
 
