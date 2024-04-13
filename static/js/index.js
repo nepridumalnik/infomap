@@ -87,19 +87,19 @@ const getTable = async () => {
 // Отправка файла
 const uploadFile = () => {
     // Получаем форму по ID
-    const form = document.getElementById('uploadForm')
+    const form = document.getElementById('uploadForm');
 
-    const file = fileInput.files[0]
+    const file = fileInput.files[0];
     if (!file) {
         // Если файл не выбран, выводим сообщение об ошибке и завершаем функцию
-        const text = 'Файл не выбран'
-        alert(text, error)
-        console.error(text, error)
-        return
+        const text = 'Файл не выбран';
+        alert(text);
+        console.error(text);
+        return;
     }
 
     // Создаем объект FormData и добавляем файл из формы
-    const formData = new FormData(form)
+    const formData = new FormData(form);
 
     // Отправляем файл на сервер с помощью Axios
     axios.post('/api/upload', formData, {
@@ -108,15 +108,31 @@ const uploadFile = () => {
         }
     }).then((response) => {
         // Обрабатываем успешный ответ, если необходимо
-        console.log('Файл успешно загружен', response)
-        form.reset()
+        console.log('Файл успешно загружен', response);
+        form.reset();
+
+        // Если успешно загружено, обновляем данные в DataTable
+        getTable().then((response) => {
+            // Получаем ссылку на экземпляр DataTable
+            const dataTable = $('#mainTable').DataTable();
+
+            // Очищаем текущие данные в таблице
+            dataTable.clear();
+
+            // Добавляем новые данные в таблицу
+            dataTable.rows.add(response.data);
+
+            // Перерисовываем таблицу
+            dataTable.draw();
+        });
     }).catch((error) => {
         // Обрабатываем ошибку, если необходимо
-        const text = 'Ошибка при загрузке файла'
-        alert(text, error)
-        console.error(text, error)
-    })
+        const text = 'Ошибка при загрузке файла';
+        alert(text);
+        console.error(text, error);
+    });
 }
+
 
 $(document).ready(() => {
     init()
