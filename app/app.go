@@ -61,6 +61,9 @@ func (app *App) registerHandlers() {
 
 	// Добавление записи
 	app.router.Path("/api/add_row").Methods("POST").HandlerFunc(app.storage.addRow)
+
+	// Обновление записи
+	app.router.Path("/api/update_row").Methods("POST").HandlerFunc(app.storage.updateRow)
 }
 
 // Создать заголовок таблицы

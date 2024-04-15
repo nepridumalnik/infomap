@@ -35,8 +35,60 @@ const initComplete = () => {
     })
 }
 
+// Сделать таблицу редактируемой
+const makeTableEditable = () => {
+    // Находим таблицу по идентификатору
+    let table = document.getElementById("mainTable");
+
+    // Получаем все ячейки таблицы
+    let cells = table.getElementsByTagName("td");
+
+    // Добавляем обработчик двойного клика к каждой ячейке
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].addEventListener("dblclick", function () {
+            // Сохраняем текущее значение ячейки
+            let currentValue = this.innerHTML;
+
+            // Создаем поле ввода
+            let input = document.createElement("input");
+            input.type = "text";
+            input.value = currentValue;
+
+            // Заменяем содержимое ячейки полем ввода
+            this.innerHTML = "";
+            this.appendChild(input);
+
+            // Добавляем обработчик нажатия Enter для сохранения изменений
+            input.addEventListener("keypress", function (event) {
+                if (event.keyCode === 13) { // Enter key code
+                    // При нажатии Enter сохраняем новое значение ячейки
+                    let newValue = this.value;
+                    let parentCell = this.parentElement;
+                    parentCell.innerHTML = newValue;
+                }
+            });
+
+            // Добавляем обработчик события потери фокуса
+            input.addEventListener("blur", function () {
+                // Логируем содержимое строки
+                let rowContent = this.parentElement.parentElement.innerHTML;
+                console.log("Строка изменена:", rowContent);
+            });
+
+            // Фокусируемся на поле ввода
+            input.focus();
+
+            // Предотвращаем дальнейшее распространение события двойного клика
+            event.stopPropagation();
+        });
+    }
+};
+
 // Обработка обновления информации в таблице
 const infoCallback = (settings, start, end, max, total, pre) => {
+    console.log('infoCallback()')
+    makeTableEditable()
+
     const tbody = document.querySelector('#mainTable tbody')
     const rows = tbody.querySelectorAll('tr')
 

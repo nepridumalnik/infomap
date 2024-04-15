@@ -186,6 +186,11 @@ func (s *storage) addRow(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+// Обновить запись
+func (s *storage) updateRow(w http.ResponseWriter, r *http.Request) {
+
+}
+
 // Удалить запись
 func (s *storage) deleteRow(w http.ResponseWriter, r *http.Request) {
 	idData := r.FormValue("id")
