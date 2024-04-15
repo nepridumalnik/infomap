@@ -151,7 +151,7 @@ func (s *storage) getTable(w http.ResponseWriter, r *http.Request) {
 }
 
 // Удалить запись
-func (s *storage) removeRow(w http.ResponseWriter, r *http.Request) {
+func (s *storage) deleteRow(w http.ResponseWriter, r *http.Request) {
 	idData := r.FormValue("id")
 	if idData == "" {
 		http.Error(w, "no id received", http.StatusBadRequest)
