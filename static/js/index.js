@@ -69,8 +69,8 @@ const infoCallback = (settings, start, end, max, total, pre) => {
 
 // Функция для удаления строки
 const deleteRow = () => {
-    const selectedRow = document.querySelector('#mainTable tbody .selected')
-    if (!selectedRow) {
+    const selectedRow = $('#mainTable tbody .selected')
+    if (selectedRow.length === 0) {
         const text = 'Строка не выделена'
         console.error(text)
         alert(text)
@@ -78,7 +78,7 @@ const deleteRow = () => {
     }
 
     // Получаем значение первого столбца из выделенной строки
-    const id = selectedRow.querySelector('td:first-child').textContent
+    const id = selectedRow.find('td:first-child').text()
 
     // Отправляем DELETE запрос на /api/delete_row с параметром id
     axios.delete('/api/delete_row', {
@@ -90,16 +90,13 @@ const deleteRow = () => {
         }
     }).then(_ => {
         console.log('Строка успешно удалена')
-        getTable().then((response) => {
-            const ins = $('#mainTable').DataTable()
-            ins.clear()
-            ins.rows.add(response.data)
-            ins.draw()
-        })
+        const dataTable = $('#mainTable').DataTable()
+        dataTable.row(selectedRow).remove().draw(false)
     }).catch(error => {
         console.error('Ошибка при удалении строки', error)
     })
 }
+
 
 // Функция для добавления строки
 const addRow = () => {
