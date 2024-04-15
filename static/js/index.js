@@ -43,7 +43,7 @@ const infoCallback = (settings, start, end, max, total, pre) => {
     rows.forEach(function (row) {
         const cells = row.querySelectorAll('td')
         cells.forEach(function (cell) {
-            // console.log(cell.textContent)
+            console.log(cell.textContent)
         })
     })
 }

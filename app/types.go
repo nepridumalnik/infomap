@@ -82,3 +82,12 @@ type App struct {
 	address string
 	m       *authMiddleware
 }
+
+// Данные, передаваемые в шаблон страницы
+type pageTemplate struct {
+	// Заголовок таблицы
+	TableHeader []string
+
+	// Админ
+	Admin bool
+}

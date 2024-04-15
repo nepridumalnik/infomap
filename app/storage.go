@@ -179,13 +179,13 @@ func rowToString(s interface{}) []string {
 		// Получаем значение поля
 		fieldValue := v.Field(i)
 
-		typeName := fieldValue.Type().Name()
-		if typeName == "Id" {
-			continue
-		}
+		// typeName := fieldValue.Type().Name()
+		// if typeName == "Id" {
+		// 	continue
+		// }
 
 		value := fieldValue.Interface()
-		data := fmt.Sprintf("\"%v\"", value)
+		data := fmt.Sprintf("%v", value)
 
 		// Преобразуем значение поля в строку и добавляем его в массив
 		paramArr = append(paramArr, fmt.Sprintf("%v", data))

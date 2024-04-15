@@ -57,6 +57,46 @@ func (app *App) registerHandlers() {
 	app.router.Path("/api/get_table").Methods("GET").HandlerFunc(app.storage.getTable)
 }
 
+// Создать заголовок таблицы
+func generateTabHeader() []string {
+	return []string{
+		// mainList,
+		"ID",
+		region,
+		responsible,
+		verified,
+
+		// vkUrl,
+		"ВКонтакте",
+
+		// okUrl,
+		"Одноклассники",
+
+		// tgUrl,
+		"Telegram",
+
+		// reason,
+		"Страница не ведётся",
+
+		// commentaryNpa,
+		"НПА",
+
+		// fullName,
+		"Наименование",
+		ogrn,
+		status,
+		commentary,
+	}
+}
+
+// Создать данные для страницы
+func createData(user *User) *pageTemplate {
+	return &pageTemplate{
+		TableHeader: generateTabHeader(),
+		Admin:       (user.Privilege == PrivilegeAdmin),
+	}
+}
+
 func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 	const defaultPath = "./static/html/index.html.tmpl"
 
@@ -80,40 +120,7 @@ func (app *App) commonHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Data  []string
-		Admin bool
-	}{
-		Data: []string{
-			// mainList,
-			region,
-			responsible,
-			verified,
-
-			// vkUrl,
-			"ВКонтакте",
-
-			// okUrl,
-			"Одноклассники",
-
-			// tgUrl,
-			"Telegram",
-
-			// reason,
-			"Страница не ведётся",
-
-			// commentaryNpa,
-			"НПА",
-
-			// fullName,
-			"Наименование",
-			ogrn,
-			status,
-			commentary,
-		},
-		Admin: (user.Privilege == PrivilegeAdmin),
-	}
-
+	data := createData(user)
 	err = tmpl.Execute(w, data)
 
 	if err != nil {
