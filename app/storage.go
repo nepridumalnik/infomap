@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"reflect"
+	"strconv"
 
 	"github.com/glebarez/sqlite"
 	"github.com/xuri/excelize/v2"
@@ -147,6 +148,28 @@ func (s *storage) getTable(w http.ResponseWriter, r *http.Request) {
 	arr := rowsToString(rows)
 	data, _ := json.Marshal(arr)
 	w.Write(data)
+}
+
+// Удалить запись
+func (s *storage) removeRow(w http.ResponseWriter, r *http.Request) {
+	idData := r.FormValue("id")
+	if idData == "" {
+		http.Error(w, "no id received", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	row := tableRow{Id: Id(id)}
+
+	result := s.db.Delete(&row).Where("id")
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusBadRequest)
+	}
 }
 
 func rowsToString(rows []tableRow) [][]string {

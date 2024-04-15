@@ -55,6 +55,9 @@ func (app *App) registerHandlers() {
 
 	// Получение страниц
 	app.router.Path("/api/get_table").Methods("GET").HandlerFunc(app.storage.getTable)
+
+	// Удаление записи
+	app.router.Path("/api/delete_row").Methods("DELETE").HandlerFunc(app.storage.removeRow)
 }
 
 // Создать заголовок таблицы

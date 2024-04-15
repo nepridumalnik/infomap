@@ -29,59 +29,79 @@ const initComplete = () => {
 
 // Завершение обновления таблицы
 const infoCallback = (settings, start, end, max, total, pre) => {
-    const tbody = document.querySelector('#mainTable tbody');
-    const rows = tbody.querySelectorAll('tr');
+    const tbody = document.querySelector('#mainTable tbody')
+    const rows = tbody.querySelectorAll('tr')
 
     // Обработчик события клика для каждой строки таблицы
     rows.forEach((row) => {
         row.addEventListener('click', () => {
             // Сбрасываем выделение предыдущей выделенной строки
-            const previouslySelected = tbody.querySelector('.selected');
+            const previouslySelected = tbody.querySelector('.selected')
             if (previouslySelected) {
-                previouslySelected.classList.remove('selected');
+                previouslySelected.classList.remove('selected')
             }
             // Выделяем текущую строку
-            row.classList.add('selected');
+            row.classList.add('selected')
             // Выводим содержимое выделяемой строки в консоль
-            console.log("Содержимое выделенной строки:");
+            console.log("Содержимое выделенной строки:")
             row.querySelectorAll('td').forEach((cell) => {
-                console.log(cell.textContent);
-            });
-        });
-    });
+                console.log(cell.textContent)
+            })
+        })
+    })
 
     // Обработчик события потери фокуса для всего документа
     document.addEventListener('click', (event) => {
-        const isClickedOutsideTable = !event.target.closest('#mainTable');
+        const isClickedOutsideTable = !event.target.closest('#mainTable')
         if (isClickedOutsideTable) {
             // Сбрасываем выделение при клике вне таблицы
-            const selectedRow = tbody.querySelector('.selected');
+            const selectedRow = tbody.querySelector('.selected')
             if (selectedRow) {
-                selectedRow.classList.remove('selected');
+                selectedRow.classList.remove('selected')
                 // Выводим сообщение о потере фокуса в консоль
-                console.log("Фокус потерян");
+                console.log("Фокус потерян")
             }
         }
-    });
+    })
 
     // Остальной ваш код
     rows.forEach((row) => {
-        const cells = row.querySelectorAll('td');
+        const cells = row.querySelectorAll('td')
         cells.forEach((cell) => {
-            console.log(cell.textContent);
-        });
-    });
-};
+            console.log(cell.textContent)
+        })
+    })
+}
 
 // Функция для удаления строки
 const deleteRow = () => {
-    // Реализация удаления строки
-    console.log('Удаление строки')
+    const selectedRow = document.querySelector('#mainTable tbody .selected')
+    if (!selectedRow) {
+        console.log('Строка не выделена')
+        alert('Строка не выделена')
+        return
+    }
+
+    // Получаем значение первого столбца из выделенной строки
+    const id = selectedRow.querySelector('td:first-child').textContent
+
+    // Отправляем DELETE запрос на /api/delete_row с параметром firstColumnValue
+    axios.delete('/api/delete_row', {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        params: {
+            id: id
+        }
+    }).then(response => {
+        console.log('Строка успешно удалена')
+    }).catch(error => {
+        console.error('Ошибка при удалении строки', error)
+    })
 }
 
 // Функция для добавления строки
 const addRow = () => {
-    // Реализация добавления строки
     console.log('Добавление строки')
 }
 
@@ -191,5 +211,9 @@ const uploadFile = () => {
 
 
 $(document).ready(() => {
+    // Обработчики событий клика для кнопок
+    $('#mainTable').on('click', 'input[value="Удалить"]', deleteRow)
+    $('#mainTable').on('click', 'input[value="Добавить"]', addRow)
+
     init()
 })
