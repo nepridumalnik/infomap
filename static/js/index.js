@@ -27,26 +27,51 @@ const initComplete = () => {
     console.log('initComplete()')
 }
 
-// Завершение инициализации
+// Завершение обновления таблицы
 const infoCallback = (settings, start, end, max, total, pre) => {
-    // console.log('infoCallback()')
-    // console.log('settings: ' + settings)
-    // console.log('start: ' + start)
-    // console.log('end: ' + end)
-    // console.log('max: ' + max)
-    // console.log('total: ' + total)
-    // console.log('pre: ' + pre)
+    const tbody = document.querySelector('#mainTable tbody');
+    const rows = tbody.querySelectorAll('tr');
 
-    const tbody = document.querySelector('#mainTable tbody')
-    const rows = tbody.querySelectorAll('tr')
-
+    // Обработчик события клика для каждой строки таблицы
     rows.forEach((row) => {
-        const cells = row.querySelectorAll('td')
+        row.addEventListener('click', () => {
+            // Сбрасываем выделение предыдущей выделенной строки
+            const previouslySelected = tbody.querySelector('.selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('selected');
+            }
+            // Выделяем текущую строку
+            row.classList.add('selected');
+            // Выводим содержимое выделяемой строки в консоль
+            console.log("Содержимое выделенной строки:");
+            row.querySelectorAll('td').forEach((cell) => {
+                console.log(cell.textContent);
+            });
+        });
+    });
+
+    // Обработчик события потери фокуса для всего документа
+    document.addEventListener('click', (event) => {
+        const isClickedOutsideTable = !event.target.closest('#mainTable');
+        if (isClickedOutsideTable) {
+            // Сбрасываем выделение при клике вне таблицы
+            const selectedRow = tbody.querySelector('.selected');
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+                // Выводим сообщение о потере фокуса в консоль
+                console.log("Фокус потерян");
+            }
+        }
+    });
+
+    // Остальной ваш код
+    rows.forEach((row) => {
+        const cells = row.querySelectorAll('td');
         cells.forEach((cell) => {
-            console.log(cell.textContent)
-        })
-    })
-}
+            console.log(cell.textContent);
+        });
+    });
+};
 
 // Функция для удаления строки
 const deleteRow = () => {
