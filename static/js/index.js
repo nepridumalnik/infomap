@@ -97,7 +97,6 @@ const deleteRow = () => {
     })
 }
 
-
 // Функция для добавления строки
 const addRow = () => {
     console.log('Добавление строки')
