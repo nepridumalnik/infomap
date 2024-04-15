@@ -196,11 +196,21 @@ const addRow = () => {
         const formData = new FormData(form)
 
         // Отправляем данные на сервер
-        axios.post("/api/add_row", formData).then(() => {
+        axios.post("/api/add_row", formData).then((response) => {
+            console.log('response: ' + JSON.stringify(response.data))
+            const row = []
+
+            for (const value of Object.values(response.data)) {
+                row.push(value)
+            }
+
+            const ins = $('#mainTable').DataTable()
+            ins.row.add(row)
+            ins.draw()
             closeForm()
         }).catch((error) => {
-            console.error('Error:', error)
-            // Здесь можно добавить обработку ошибок, например, отображение сообщения об ошибке пользователю
+            console.error(error)
+            alert(error)
         })
 
         // Отменяем стандартное поведение формы

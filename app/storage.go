@@ -181,6 +181,9 @@ func (s *storage) addRow(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "no rows affected", http.StatusBadRequest)
 		return
 	}
+
+	data, _ := json.Marshal(row)
+	w.Write(data)
 }
 
 // Удалить запись
