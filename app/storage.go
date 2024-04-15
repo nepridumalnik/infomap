@@ -172,6 +172,7 @@ func (s *storage) deleteRow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Строки в строку
 func rowsToString(rows []tableRow) [][]string {
 	var rowsArr [][]string
 
