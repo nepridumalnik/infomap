@@ -38,28 +38,28 @@ const initComplete = () => {
 // Сделать таблицу редактируемой
 const makeTableEditable = () => {
     // Находим таблицу по идентификатору
-    let table = document.getElementById("mainTable");
+    const table = document.getElementById('mainTable');
 
     // Получаем все ячейки таблицы
-    let cells = table.getElementsByTagName("td");
+    const cells = table.getElementsByTagName('td');
 
     // Добавляем обработчик двойного клика к каждой ячейке
     for (let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener("dblclick", function () {
+        cells[i].addEventListener('dblclick', function () {
             // Сохраняем текущее значение ячейки
-            let currentValue = this.innerHTML;
+            const currentValue = this.innerHTML;
 
             // Создаем поле ввода
-            let input = document.createElement("input");
-            input.type = "text";
+            let input = document.createElement('input');
+            input.type = 'text';
             input.value = currentValue;
 
             // Заменяем содержимое ячейки полем ввода
-            this.innerHTML = "";
+            this.innerHTML = '';
             this.appendChild(input);
 
             // Добавляем обработчик нажатия Enter для сохранения изменений
-            input.addEventListener("keypress", function (event) {
+            input.addEventListener('keypress', function (event) {
                 if (event.keyCode === 13) { // Enter key code
                     // При нажатии Enter сохраняем новое значение ячейки
                     let newValue = this.value;
@@ -69,10 +69,10 @@ const makeTableEditable = () => {
             });
 
             // Добавляем обработчик события потери фокуса
-            input.addEventListener("blur", function () {
+            input.addEventListener('blur', function () {
                 // Логируем содержимое строки
                 let rowContent = this.parentElement.parentElement.innerHTML;
-                console.log("Строка изменена:", rowContent);
+                console.log('Строка изменена:', rowContent);
             });
 
             // Фокусируемся на поле ввода
@@ -230,7 +230,7 @@ const addRow = () => {
     formContainer.appendChild(form)
     document.body.appendChild(formContainer)
 
-    // Закрытие формы при нажатии на серый фон или кнопку "Отмена"
+    // Закрытие формы при нажатии на серый фон или кнопку 'Отмена'
     const closeForm = () => {
         document.body.removeChild(formContainer)
     }
@@ -248,7 +248,7 @@ const addRow = () => {
         const formData = new FormData(form)
 
         // Отправляем данные на сервер
-        axios.post("/api/add_row", formData).then((response) => {
+        axios.post('/api/add_row', formData).then((response) => {
             console.log('response: ' + JSON.stringify(response.data))
             const row = []
 
@@ -376,8 +376,8 @@ const uploadFile = () => {
 
 $(document).ready(() => {
     // Обработчики событий клика для кнопок
-    $('#mainTable').on('click', 'input[value="Удалить"]', deleteRow)
-    $('#mainTable').on('click', 'input[value="Добавить"]', addRow)
+    $('#mainTable').on('click', 'input[value='Удалить']', deleteRow)
+    $('#mainTable').on('click', 'input[value='Добавить']', addRow)
 
     init()
 })
