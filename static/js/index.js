@@ -40,9 +40,9 @@ const infoCallback = (settings, start, end, max, total, pre) => {
     const tbody = document.querySelector('#mainTable tbody')
     const rows = tbody.querySelectorAll('tr')
 
-    rows.forEach(function (row) {
+    rows.forEach((row) => {
         const cells = row.querySelectorAll('td')
-        cells.forEach(function (cell) {
+        cells.forEach((cell) => {
             console.log(cell.textContent)
         })
     })
