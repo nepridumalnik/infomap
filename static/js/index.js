@@ -120,12 +120,13 @@ const addRow = () => {
     form.style.flexDirection = 'column' // Поля располагаются вертикально
 
     // Функция для создания поля ввода
-    function createInputField(labelText, inputType) {
+    const createInputField = (labelText, inputType) => {
         let label = document.createElement('label')
         label.textContent = labelText + ': '
         let input = document.createElement('input')
+        input.name = labelText
         input.type = inputType
-        input.required = true
+        // input.required = true
         input.style.marginBottom = '10px'
         label.appendChild(input)
         form.appendChild(label)
@@ -134,7 +135,7 @@ const addRow = () => {
     // Создание полей ввода
     createInputField('Регион', 'text')
     createInputField('Назначен ответственный', 'text')
-    createInputField('Страница подтверждена', 'checkbox')
+    createInputField('Страница подтверждена', 'text')
     createInputField('ВКонтакте', 'url')
     createInputField('Одноклассники', 'url')
     createInputField('Telegram', 'url')
@@ -192,11 +193,21 @@ const addRow = () => {
 
     // Отправка формы
     form.addEventListener('submit', (event) => {
-        // В этой функции вы можете обработать данные формы, например, отправить их на сервер
-        // Затем закрыть форму, например: closeForm()
+        const formData = new FormData(form)
+
+        // Отправляем данные на сервер
+        axios.post("/api/add_row", formData).then(() => {
+            closeForm()
+        }).catch((error) => {
+            console.error('Error:', error)
+            // Здесь можно добавить обработку ошибок, например, отображение сообщения об ошибке пользователю
+        })
+
+        // Отменяем стандартное поведение формы
         event.preventDefault()
     })
 }
+
 
 // Обработка загрузки страницы
 const init = () => {

@@ -150,6 +150,31 @@ func (s *storage) getTable(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func (s *storage) addRow(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(limitation)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	row := tableRow{
+		Region:        r.FormValue("Регион"),
+		Responsible:   r.FormValue("Назначен ответственный"),
+		Verified:      r.FormValue("Страница подтверждена"),
+		VkUrl:         r.FormValue("ВКонтакте"),
+		OkUrl:         r.FormValue("Одноклассники"),
+		TgUrl:         r.FormValue("Telegram"),
+		Reason:        r.FormValue("Официальная страница не ведется на основании"),
+		CommentaryNpa: r.FormValue("Комментарий по НПА"),
+		FullName:      r.FormValue("Полное наименование объекта"),
+		Ogrn:          r.FormValue("ОГРН"),
+		Status:        r.FormValue("Статус"),
+		Commentary:    r.FormValue("Комментарий"),
+	}
+
+	fmt.Println(row)
+}
+
 // Удалить запись
 func (s *storage) deleteRow(w http.ResponseWriter, r *http.Request) {
 	idData := r.FormValue("id")
