@@ -24,10 +24,18 @@ const language = {
 
 // Завершение инициализации
 const initComplete = () => {
-    console.log('initComplete()')
+    // Получаем данные для таблицы после инициализации
+    getTable().then((response) => {
+        const ins = $('#mainTable').DataTable()
+        ins.clear()
+        ins.rows.add(response.data)
+        ins.draw()
+    }).catch((error) => {
+        console.error('Ошибка при загрузке данных для таблицы:', error)
+    })
 }
 
-// Завершение обновления таблицы
+// Обработка обновления информации в таблице
 const infoCallback = (settings, start, end, max, total, pre) => {
     const tbody = document.querySelector('#mainTable tbody')
     const rows = tbody.querySelectorAll('tr')
@@ -40,13 +48,9 @@ const infoCallback = (settings, start, end, max, total, pre) => {
             if (previouslySelected) {
                 previouslySelected.classList.remove('selected')
             }
+
             // Выделяем текущую строку
             row.classList.add('selected')
-            // Выводим содержимое выделяемой строки в консоль
-            console.log("Содержимое выделенной строки:")
-            row.querySelectorAll('td').forEach((cell) => {
-                console.log(cell.textContent)
-            })
         })
     })
 
@@ -58,18 +62,8 @@ const infoCallback = (settings, start, end, max, total, pre) => {
             const selectedRow = tbody.querySelector('.selected')
             if (selectedRow) {
                 selectedRow.classList.remove('selected')
-                // Выводим сообщение о потере фокуса в консоль
-                console.log("Фокус потерян")
             }
         }
-    })
-
-    // Остальной ваш код
-    rows.forEach((row) => {
-        const cells = row.querySelectorAll('td')
-        cells.forEach((cell) => {
-            console.log(cell.textContent)
-        })
     })
 }
 
@@ -77,15 +71,16 @@ const infoCallback = (settings, start, end, max, total, pre) => {
 const deleteRow = () => {
     const selectedRow = document.querySelector('#mainTable tbody .selected')
     if (!selectedRow) {
-        console.log('Строка не выделена')
-        alert('Строка не выделена')
+        const text = 'Строка не выделена'
+        console.error(text)
+        alert(text)
         return
     }
 
     // Получаем значение первого столбца из выделенной строки
     const id = selectedRow.querySelector('td:first-child').textContent
 
-    // Отправляем DELETE запрос на /api/delete_row с параметром firstColumnValue
+    // Отправляем DELETE запрос на /api/delete_row с параметром id
     axios.delete('/api/delete_row', {
         headers: {
             'Content-Type': 'application/json'
@@ -93,8 +88,14 @@ const deleteRow = () => {
         params: {
             id: id
         }
-    }).then(response => {
+    }).then(_ => {
         console.log('Строка успешно удалена')
+        getTable().then((response) => {
+            const ins = $('#mainTable').DataTable()
+            ins.clear()
+            ins.rows.add(response.data)
+            ins.draw()
+        })
     }).catch(error => {
         console.error('Ошибка при удалении строки', error)
     })
@@ -138,7 +139,6 @@ const init = () => {
     })
 }
 
-
 // Деавторизация
 const unauth = () => {
     console.log('unauth')
@@ -146,7 +146,7 @@ const unauth = () => {
         console.log('Response: ' + response)
         window.location.reload()
     }).catch((error) => {
-        console.log('Error: ' + error)
+        console.error('Error: ' + error)
     })
 }
 
@@ -156,7 +156,7 @@ const getTable = async () => {
         const response = await axios.get('/api/get_table')
         return response
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -208,7 +208,6 @@ const uploadFile = () => {
         console.error(text, error)
     })
 }
-
 
 $(document).ready(() => {
     // Обработчики событий клика для кнопок
