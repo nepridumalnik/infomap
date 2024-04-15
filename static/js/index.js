@@ -26,10 +26,10 @@ const language = {
 const initComplete = () => {
     // Получаем данные для таблицы после инициализации
     getTable().then((response) => {
-        const ins = $('#mainTable').DataTable()
-        ins.clear()
-        ins.rows.add(response.data)
-        ins.draw()
+        const table = $('#mainTable').DataTable()
+        table.clear()
+        table.rows.add(response.data)
+        table.draw()
     }).catch((error) => {
         console.error('Ошибка при загрузке данных для таблицы:', error)
     })
@@ -204,9 +204,9 @@ const addRow = () => {
                 row.push(value)
             }
 
-            const ins = $('#mainTable').DataTable()
-            ins.row.add(row)
-            ins.draw()
+            const table = $('#mainTable').DataTable()
+            table.row.add(row)
+            table.draw()
             closeForm()
         }).catch((error) => {
             console.error(error)
@@ -222,15 +222,15 @@ const addRow = () => {
 // Обработка загрузки страницы
 const init = () => {
     getTable().then((response) => {
-        const ins = $('#mainTable').DataTable({
+        const table = $('#mainTable').DataTable({
             language: language,
             initComplete: initComplete,
             infoCallback: infoCallback,
         })
 
-        ins.clear()
-        ins.rows.add(response.data)
-        ins.draw()
+        table.clear()
+        table.rows.add(response.data)
+        table.draw()
 
         // Добавление кнопок на таблицу
         const selBtn = document.getElementById('dt-length-0')
