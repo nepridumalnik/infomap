@@ -126,7 +126,7 @@ const addRow = () => {
         let input = document.createElement('input')
         input.name = labelText
         input.type = inputType
-        // input.required = true
+        input.required = true
         input.style.marginBottom = '10px'
         label.appendChild(input)
         form.appendChild(label)

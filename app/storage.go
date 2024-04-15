@@ -172,7 +172,15 @@ func (s *storage) addRow(w http.ResponseWriter, r *http.Request) {
 		Commentary:    r.FormValue("Комментарий"),
 	}
 
-	fmt.Println(row)
+	result := s.db.Create(&row)
+
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusBadRequest)
+		return
+	} else if result.RowsAffected != 1 {
+		http.Error(w, "no rows affected", http.StatusBadRequest)
+		return
+	}
 }
 
 // Удалить запись
