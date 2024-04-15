@@ -99,7 +99,103 @@ const deleteRow = () => {
 
 // Функция для добавления строки
 const addRow = () => {
-    console.log('Добавление строки')
+    // Создание элементов формы
+    let formContainer = document.createElement('div')
+    formContainer.style.position = 'fixed'
+    formContainer.style.top = '0'
+    formContainer.style.left = '0'
+    formContainer.style.width = '100%'
+    formContainer.style.height = '100%'
+    formContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+    formContainer.style.display = 'flex'
+    formContainer.style.alignItems = 'center'
+    formContainer.style.justifyContent = 'center'
+    formContainer.style.zIndex = '9999'
+
+    let form = document.createElement('form')
+    form.style.backgroundColor = '#fff'
+    form.style.padding = '20px'
+    form.style.borderRadius = '5px'
+    form.style.display = 'flex'
+    form.style.flexDirection = 'column' // Поля располагаются вертикально
+
+    // Функция для создания поля ввода
+    function createInputField(labelText, inputType) {
+        let label = document.createElement('label')
+        label.textContent = labelText + ': '
+        let input = document.createElement('input')
+        input.type = inputType
+        input.required = true
+        input.style.marginBottom = '10px'
+        label.appendChild(input)
+        form.appendChild(label)
+    }
+
+    // Создание полей ввода
+    createInputField('Регион', 'text')
+    createInputField('Назначен ответственный', 'text')
+    createInputField('Страница подтверждена', 'checkbox')
+    createInputField('ВКонтакте', 'url')
+    createInputField('Одноклассники', 'url')
+    createInputField('Telegram', 'url')
+    createInputField('Официальная страница не ведется на основании', 'text')
+    createInputField('Комментарий по НПА', 'text')
+    createInputField('Полное наименование объекта', 'text')
+    createInputField('ОГРН', 'text')
+    createInputField('Статус', 'text')
+    createInputField('Комментарий', 'textarea')
+
+    // Создание кнопок
+    let buttonsContainer = document.createElement('div')
+    buttonsContainer.style.display = 'flex'
+    buttonsContainer.style.justifyContent = 'space-between'
+    form.appendChild(buttonsContainer)
+
+    let submitButton = document.createElement('button')
+    submitButton.type = 'submit'
+    submitButton.textContent = 'Отправить'
+    submitButton.style.padding = '10px 20px'
+    submitButton.style.backgroundColor = '#4CAF50'
+    submitButton.style.color = '#fff'
+    submitButton.style.border = 'none'
+    submitButton.style.borderRadius = '3px'
+    submitButton.style.cursor = 'pointer'
+    buttonsContainer.appendChild(submitButton)
+
+    let cancelButton = document.createElement('button')
+    cancelButton.type = 'button'
+    cancelButton.textContent = 'Отмена'
+    cancelButton.style.padding = '10px 20px'
+    cancelButton.style.backgroundColor = '#f44336'
+    cancelButton.style.color = '#fff'
+    cancelButton.style.border = 'none'
+    cancelButton.style.borderRadius = '3px'
+    cancelButton.style.cursor = 'pointer'
+    buttonsContainer.appendChild(cancelButton)
+
+    // Добавление формы на страницу
+    formContainer.appendChild(form)
+    document.body.appendChild(formContainer)
+
+    // Закрытие формы при нажатии на серый фон или кнопку "Отмена"
+    const closeForm = () => {
+        document.body.removeChild(formContainer)
+    }
+
+    formContainer.addEventListener('click', (event) => {
+        if (event.target === formContainer) {
+            closeForm()
+        }
+    })
+
+    cancelButton.addEventListener('click', closeForm)
+
+    // Отправка формы
+    form.addEventListener('submit', (event) => {
+        // В этой функции вы можете обработать данные формы, например, отправить их на сервер
+        // Затем закрыть форму, например: closeForm()
+        event.preventDefault()
+    })
 }
 
 // Обработка загрузки страницы
