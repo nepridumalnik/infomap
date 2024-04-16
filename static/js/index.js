@@ -22,6 +22,35 @@ const language = {
     },
 }
 
+// Обработка загрузки страницы
+const init = () => {
+    getTable().then((response) => {
+        const table = $('#mainTable').DataTable()
+
+        table.clear()
+        table.rows.add(response.data)
+        table.draw()
+
+        // Добавление кнопок на таблицу
+        const selBtn = document.getElementById('dt-length-0')
+        const parentNode = selBtn.parentElement
+
+        const deleteButton = document.createElement('input')
+        deleteButton.type = 'button'
+        deleteButton.value = 'Удалить'
+        deleteButton.onclick = deleteRow
+
+        const addButton = document.createElement('input')
+        addButton.type = 'button'
+        addButton.value = 'Добавить'
+        addButton.onclick = addRow
+
+        // Добавляем кнопки после кнопки выбора количества записей на странице
+        parentNode.insertBefore(deleteButton, selBtn.nextSibling)
+        parentNode.insertBefore(addButton, selBtn.nextSibling)
+    })
+}
+
 // Завершение инициализации
 const initComplete = () => {
     // Получаем данные для таблицы после инициализации
@@ -78,11 +107,29 @@ const makeTableEditable = () => {
 
                 // Добавляем содержимое каждой ячейки в массив
                 for (const cell of rowCells) {
-                    rowContentArray.push(cell.innerHTML)
+                    let cellContent = cell.innerHTML
+                    // Проверяем, является ли содержимое ячейки типом input
+                    if (cell.querySelector('input')) {
+                        // Если является, используем значение input
+                        cellContent = cell.querySelector('input').value
+                    }
+                    rowContentArray.push(cellContent);
                 }
 
-                // Логируем содержимое строки
-                console.log('Строка изменена:', rowContentArray)
+                // Преобразуем массив в JSON-строку
+                const rowContentJSON = JSON.stringify(rowContentArray)
+
+                // Отправляем POST-запрос на сервер
+                axios.put('/api/update_row', rowContentJSON)
+                    .then(_ => {
+                        console.log('Строка успешно обновлена')
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при обновлении строки:', error)
+                    }).finally(() => {
+                        // В любом случае обновляем таблицу
+                        init()
+                    })
             })
 
             // Фокусируемся на поле ввода
@@ -280,40 +327,6 @@ const addRow = () => {
     })
 }
 
-
-// Обработка загрузки страницы
-const init = () => {
-    getTable().then((response) => {
-        const table = $('#mainTable').DataTable({
-            language: language,
-            initComplete: initComplete,
-            infoCallback: infoCallback,
-        })
-
-        table.clear()
-        table.rows.add(response.data)
-        table.draw()
-
-        // Добавление кнопок на таблицу
-        const selBtn = document.getElementById('dt-length-0')
-        const parentNode = selBtn.parentElement
-
-        const deleteButton = document.createElement('input')
-        deleteButton.type = 'button'
-        deleteButton.value = 'Удалить'
-        deleteButton.onclick = deleteRow
-
-        const addButton = document.createElement('input')
-        addButton.type = 'button'
-        addButton.value = 'Добавить'
-        addButton.onclick = addRow
-
-        // Добавляем кнопки после кнопки выбора количества записей на странице
-        parentNode.insertBefore(deleteButton, selBtn.nextSibling)
-        parentNode.insertBefore(addButton, selBtn.nextSibling)
-    })
-}
-
 // Деавторизация
 const unauth = () => {
     console.log('unauth')
@@ -385,6 +398,13 @@ const uploadFile = () => {
 }
 
 $(document).ready(() => {
+    // Первичная инициализация таблицы
+    $('#mainTable').DataTable({
+        language: language,
+        initComplete: initComplete,
+        infoCallback: infoCallback,
+    })
+
     // Обработчики событий клика для кнопок
     $('#mainTable').on('click', 'input[value=\'Удалить\']', deleteRow)
     $('#mainTable').on('click', 'input[value=\'Добавить\']', addRow)
